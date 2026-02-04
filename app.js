@@ -26,6 +26,8 @@ const publicAvatar = document.getElementById("publicAvatar");
 const publicName = document.getElementById("publicName");
 const publicKeyboard = document.getElementById("publicKeyboard");
 const publicJoin = document.getElementById("publicJoin");
+const publicLevel = document.getElementById("publicLevel");
+const publicTitles = document.getElementById("publicTitles");
 const publicBest = document.getElementById("publicBest");
 const closePublicProfileBtn = document.getElementById("closePublicProfileBtn");
 const themeBtn = document.getElementById("themeBtn");
@@ -38,6 +40,8 @@ const profileAvatar = document.getElementById("profileAvatar");
 const profileName = document.getElementById("profileName");
 const profileProvider = document.getElementById("profileProvider");
 const profileJoin = document.getElementById("profileJoin");
+const profileLevel = document.getElementById("profileLevel");
+const profileTitles = document.getElementById("profileTitles");
 const profileBest = document.getElementById("profileBest");
 const profileRecent = document.getElementById("profileRecent");
 const closeProfileBtn = document.getElementById("closeProfileBtn");
@@ -633,6 +637,7 @@ async function loadProfile() {
   } else {
     profileJoin.textContent = "";
   }
+  profileLevel.textContent = `Level ${currentUser.level || 1} · ${currentUser.totalXp || 0} XP`;
   keyboardStatus.textContent = currentUser.keyboardModel
     ? `Using ${currentUser.keyboardModel}`
     : "Choose your keyboard to display it on your profile.";
@@ -665,6 +670,18 @@ async function loadProfile() {
       const item = document.createElement("li");
       item.textContent = `${entry.wpm} WPM · ${entry.accuracy}% · ${entry.duration_seconds}s`;
       profileRecent.appendChild(item);
+    });
+  }
+
+  profileTitles.innerHTML = "";
+  const titles = currentUser.unlockedTitles || [];
+  if (!titles.length) {
+    profileTitles.innerHTML = "<li>No titles yet.</li>";
+  } else {
+    titles.forEach((title) => {
+      const item = document.createElement("li");
+      item.textContent = title;
+      profileTitles.appendChild(item);
     });
   }
 
@@ -742,6 +759,7 @@ async function openPublicProfile(userId) {
   } else {
     publicJoin.textContent = "";
   }
+  publicLevel.textContent = `Level ${data.user.level || 1} · ${data.user.totalXp || 0} XP`;
   if (data.user.avatarUrl) {
     publicAvatar.src = data.user.avatarUrl;
     publicAvatar.classList.remove("hidden");
@@ -756,6 +774,18 @@ async function openPublicProfile(userId) {
       const item = document.createElement("li");
       item.textContent = `${entry.wpm} WPM · ${entry.accuracy}% · ${entry.duration_seconds}s`;
       publicBest.appendChild(item);
+    });
+  }
+
+  publicTitles.innerHTML = "";
+  const titles = data.user.unlockedTitles || [];
+  if (!titles.length) {
+    publicTitles.innerHTML = "<li>No titles yet.</li>";
+  } else {
+    titles.forEach((title) => {
+      const item = document.createElement("li");
+      item.textContent = title;
+      publicTitles.appendChild(item);
     });
   }
   openPublicProfileOverlay();

@@ -59,6 +59,25 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
+const LEVEL_TITLES = [
+  { level: 2, title: "Apprentice" },
+  { level: 4, title: "Journeyman" },
+  { level: 6, title: "Adept" },
+  { level: 8, title: "Crafted" },
+  { level: 10, title: "Master Typist" },
+];
+
+const SPEED_TITLES = [
+  { wpm: 80, title: "Swift Fingers" },
+  { wpm: 100, title: "Velocity" },
+  { wpm: 120, title: "Overclocked" },
+  { wpm: 140, title: "Warp" },
+];
+
+function computeLevel(totalXp) {
+  return Math.floor(Math.sqrt(totalXp / 100)) + 1;
+}
+
 function ensureAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
   return res.status(401).json({ error: "Unauthorized" });
@@ -155,8 +174,23 @@ app.get("/api/me", (req, res) => {
     provider,
     keyboard_model: keyboardModel,
     created_at: createdAt,
+    total_xp: totalXp,
+    level,
+    unlocked_titles: unlockedTitles,
   } = req.user;
-  return res.json({ user: { id, displayName, avatarUrl, provider, keyboardModel, createdAt } });
+  return res.json({
+    user: {
+      id,
+      displayName,
+      avatarUrl,
+      provider,
+      keyboardModel,
+      createdAt,
+      totalXp: totalXp || 0,
+      level: level || 1,
+      unlockedTitles: unlockedTitles || [],
+    },
+  });
 });
 
 app.get("/api/leaderboard", async (req, res) => {
@@ -204,7 +238,7 @@ app.get("/api/users/:id", async (req, res) => {
     return res.status(400).json({ error: "Invalid user" });
   }
   const { rows } = await pool.query(
-    "SELECT id, display_name, avatar_url, keyboard_model, created_at FROM users WHERE id = $1",
+    "SELECT id, display_name, avatar_url, keyboard_model, created_at, total_xp, level, unlocked_titles FROM users WHERE id = $1",
     [userId]
   );
   const user = rows[0];
@@ -225,6 +259,9 @@ app.get("/api/users/:id", async (req, res) => {
       avatarUrl: user.avatar_url,
       keyboardModel: user.keyboard_model,
       createdAt: user.created_at,
+      totalXp: user.total_xp || 0,
+      level: user.level || 1,
+      unlockedTitles: user.unlocked_titles || [],
     },
     best: bestRows,
   });
@@ -272,6 +309,28 @@ app.post("/api/score", ensureAuth, async (req, res) => {
   if (isBetter && currentBest) {
     await pool.query("UPDATE scores SET is_best = false WHERE id = $1", [currentBest.id]);
   }
+
+  const correctChars = Math.max(0, Math.round(charsTyped * (accuracy / 100)));
+  const { rows: userRows } = await pool.query(
+    "SELECT total_xp, level, unlocked_titles FROM users WHERE id = $1",
+    [req.user.id]
+  );
+  const user = userRows[0];
+  const newTotalXp = (user?.total_xp || 0) + correctChars;
+  const newLevel = computeLevel(newTotalXp);
+  const unlocked = new Set(user?.unlocked_titles || []);
+
+  LEVEL_TITLES.forEach(({ level, title }) => {
+    if (newLevel >= level) unlocked.add(title);
+  });
+  SPEED_TITLES.forEach(({ wpm: threshold, title }) => {
+    if (wpm >= threshold) unlocked.add(title);
+  });
+
+  await pool.query(
+    "UPDATE users SET total_xp = $1, level = $2, unlocked_titles = $3 WHERE id = $4",
+    [newTotalXp, newLevel, Array.from(unlocked), req.user.id]
+  );
 
   res.json({ ok: true });
 });
