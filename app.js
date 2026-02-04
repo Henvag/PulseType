@@ -28,6 +28,8 @@ const publicKeyboard = document.getElementById("publicKeyboard");
 const publicJoin = document.getElementById("publicJoin");
 const publicLevel = document.getElementById("publicLevel");
 const publicTitles = document.getElementById("publicTitles");
+const publicXpFill = document.getElementById("publicXpFill");
+const publicXpText = document.getElementById("publicXpText");
 const publicBest = document.getElementById("publicBest");
 const closePublicProfileBtn = document.getElementById("closePublicProfileBtn");
 const themeBtn = document.getElementById("themeBtn");
@@ -42,6 +44,8 @@ const profileProvider = document.getElementById("profileProvider");
 const profileJoin = document.getElementById("profileJoin");
 const profileLevel = document.getElementById("profileLevel");
 const profileTitles = document.getElementById("profileTitles");
+const profileXpFill = document.getElementById("profileXpFill");
+const profileXpText = document.getElementById("profileXpText");
 const profileBest = document.getElementById("profileBest");
 const profileRecent = document.getElementById("profileRecent");
 const closeProfileBtn = document.getElementById("closeProfileBtn");
@@ -282,6 +286,14 @@ function renderThemeList(filter = "") {
 
 const KEYBOARD_CUSTOM_VALUE = "Unlisted / Custom";
 const KEYBOARD_BRANDS = ["Keychron", "Razer", "Logitech", "Corsair", "Ducky", "HHKB"];
+
+function levelStartXp(level) {
+  return Math.max(0, (level - 1) ** 2 * 100);
+}
+
+function levelEndXp(level) {
+  return level ** 2 * 100;
+}
 
 function shuffleArray(list) {
   const copy = [...list];
@@ -638,6 +650,13 @@ async function loadProfile() {
     profileJoin.textContent = "";
   }
   profileLevel.textContent = `Level ${currentUser.level || 1} · ${currentUser.totalXp || 0} XP`;
+  const currentLevel = currentUser.level || 1;
+  const totalXp = currentUser.totalXp || 0;
+  const startXp = levelStartXp(currentLevel);
+  const endXp = levelEndXp(currentLevel);
+  const progress = endXp > startXp ? ((totalXp - startXp) / (endXp - startXp)) * 100 : 0;
+  profileXpFill.style.width = `${Math.max(0, Math.min(progress, 100))}%`;
+  profileXpText.textContent = `${totalXp - startXp} / ${endXp - startXp} XP to level ${currentLevel + 1}`;
   keyboardStatus.textContent = currentUser.keyboardModel
     ? `Using ${currentUser.keyboardModel}`
     : "Choose your keyboard to display it on your profile.";
@@ -760,6 +779,15 @@ async function openPublicProfile(userId) {
     publicJoin.textContent = "";
   }
   publicLevel.textContent = `Level ${data.user.level || 1} · ${data.user.totalXp || 0} XP`;
+  const publicLevelValue = data.user.level || 1;
+  const publicTotalXp = data.user.totalXp || 0;
+  const publicStart = levelStartXp(publicLevelValue);
+  const publicEnd = levelEndXp(publicLevelValue);
+  const publicProgress = publicEnd > publicStart ? ((publicTotalXp - publicStart) / (publicEnd - publicStart)) * 100 : 0;
+  publicXpFill.style.width = `${Math.max(0, Math.min(publicProgress, 100))}%`;
+  publicXpText.textContent = `${publicTotalXp - publicStart} / ${publicEnd - publicStart} XP to level ${
+    publicLevelValue + 1
+  }`;
   if (data.user.avatarUrl) {
     publicAvatar.src = data.user.avatarUrl;
     publicAvatar.classList.remove("hidden");
