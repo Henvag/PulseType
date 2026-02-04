@@ -19,7 +19,10 @@ const logoutBtn = document.getElementById("logoutBtn");
 const leaderboardList = document.getElementById("leaderboardList");
 const userBtn = document.getElementById("userBtn");
 const leaderboardBtn = document.getElementById("leaderboardBtn");
-const leaderboardSection = document.getElementById("leaderboard");
+const leaderboardOverlay = document.getElementById("leaderboardOverlay");
+const closeLeaderboardBtn = document.getElementById("closeLeaderboardBtn");
+const leaderboardTitle = document.getElementById("leaderboardTitle");
+const leaderboardTabs = Array.from(document.querySelectorAll(".tab-btn"));
 const profileOverlay = document.getElementById("profileOverlay");
 const profileAvatar = document.getElementById("profileAvatar");
 const profileName = document.getElementById("profileName");
@@ -387,28 +390,40 @@ async function loadMe() {
   }
 }
 
-async function loadLeaderboard() {
-  const res = await fetch("/api/leaderboard");
+async function loadLeaderboard(duration = 15) {
+  const res = await fetch(`/api/leaderboard?duration=${duration}`);
   const data = await res.json();
   leaderboardList.innerHTML = "";
   data.scores.forEach((entry, index) => {
     const item = document.createElement("li");
-    item.className = "leaderboard-item";
-    const left = document.createElement("div");
-    left.className = "leaderboard-left";
+    item.className = "leaderboard-row";
+
+    const rank = document.createElement("span");
+    rank.textContent = `${index + 1}`;
+
+    const name = document.createElement("div");
+    name.className = "leaderboard-name";
     if (entry.avatar_url) {
       const avatar = document.createElement("img");
       avatar.src = entry.avatar_url;
       avatar.alt = entry.display_name;
-      left.appendChild(avatar);
+      name.appendChild(avatar);
     }
-    const name = document.createElement("span");
-    name.textContent = `${index + 1}. ${entry.display_name}`;
-    left.appendChild(name);
-    const score = document.createElement("span");
-    score.className = "leaderboard-score";
-    score.textContent = `${entry.wpm} WPM · ${entry.accuracy}% · ${entry.duration_seconds}s`;
-    item.append(left, score);
+    const label = document.createElement("span");
+    label.textContent = entry.display_name;
+    name.appendChild(label);
+
+    const wpm = document.createElement("span");
+    wpm.textContent = entry.wpm;
+
+    const accuracy = document.createElement("span");
+    accuracy.textContent = `${entry.accuracy}%`;
+
+    const date = document.createElement("span");
+    const dateValue = new Date(entry.created_at);
+    date.textContent = dateValue.toLocaleDateString();
+
+    item.append(rank, name, wpm, accuracy, date);
     leaderboardList.appendChild(item);
   });
 }
@@ -623,7 +638,12 @@ userBtn.addEventListener("click", () => {
 });
 
 leaderboardBtn.addEventListener("click", () => {
-  leaderboardSection.scrollIntoView({ behavior: "smooth" });
+  leaderboardOverlay.classList.add("show");
+  leaderboardOverlay.setAttribute("aria-hidden", "false");
+  const activeTab = leaderboardTabs.find((tab) => tab.classList.contains("active"));
+  const duration = Number(activeTab?.dataset.duration || 15);
+  leaderboardTitle.textContent = `Time ${duration} Leaderboard`;
+  loadLeaderboard(duration);
 });
 
 document.addEventListener("click", (event) => {
@@ -645,6 +665,28 @@ profileOverlay.addEventListener("click", (event) => {
 });
 
 closeProfileBtn.addEventListener("click", closeProfile);
+
+closeLeaderboardBtn.addEventListener("click", () => {
+  leaderboardOverlay.classList.remove("show");
+  leaderboardOverlay.setAttribute("aria-hidden", "true");
+});
+
+leaderboardOverlay.addEventListener("click", (event) => {
+  if (event.target === leaderboardOverlay) {
+    leaderboardOverlay.classList.remove("show");
+    leaderboardOverlay.setAttribute("aria-hidden", "true");
+  }
+});
+
+leaderboardTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    leaderboardTabs.forEach((btn) => btn.classList.remove("active"));
+    tab.classList.add("active");
+    const duration = Number(tab.dataset.duration);
+    leaderboardTitle.textContent = `Time ${duration} Leaderboard`;
+    loadLeaderboard(duration);
+  });
+});
 
 loginOverlay.addEventListener("click", (event) => {
   if (event.target === loginOverlay) {
@@ -672,4 +714,3 @@ buildWords();
 renderWords();
 inputEl.focus();
 loadMe();
-loadLeaderboard();

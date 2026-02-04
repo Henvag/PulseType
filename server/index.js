@@ -152,17 +152,19 @@ app.get("/api/me", (req, res) => {
   return res.json({ user: { id, displayName, avatarUrl, provider } });
 });
 
-app.get("/api/leaderboard", async (_req, res) => {
+app.get("/api/leaderboard", async (req, res) => {
+  const duration = Number(req.query.duration) || 15;
   const { rows } = await pool.query(
     `SELECT s.id, s.wpm, s.accuracy, s.chars_typed, s.duration_seconds, s.created_at,
             u.display_name, u.avatar_url
      FROM scores s
      JOIN users u ON s.user_id = u.id
-     WHERE s.is_best = true
+     WHERE s.is_best = true AND s.duration_seconds = $1
      ORDER BY s.wpm DESC, s.accuracy DESC
-     LIMIT 20;`
+     LIMIT 25;`,
+    [duration]
   );
-  res.json({ scores: rows });
+  res.json({ scores: rows, duration });
 });
 
 app.get("/api/me/scores", ensureAuth, async (req, res) => {

@@ -77,13 +77,6 @@
         <button id="nextBtn" class="btn" type="button">New Text</button>
       </section>
 
-      <section id="leaderboard" class="leaderboard" aria-label="Leaderboard">
-        <div class="leaderboard-header">
-          <h2>Leaderboard</h2>
-          <p>Top scores (best per user)</p>
-        </div>
-        <ol id="leaderboardList" class="leaderboard-list"></ol>
-      </section>
     </main>
 
     <div id="resultOverlay" class="overlay" aria-hidden="true">
@@ -155,6 +148,35 @@
             </span>
             <span>Continue with GitHub</span>
           </a>
+        </div>
+      </div>
+    </div>
+
+    <div id="leaderboardOverlay" class="overlay leaderboard-overlay" aria-hidden="true">
+      <div class="leaderboard-card" role="dialog" aria-modal="true" aria-labelledby="leaderboardTitle">
+        <aside class="leaderboard-tabs">
+          <button class="tab-btn active" data-duration="15" type="button">Time 15</button>
+          <button class="tab-btn" data-duration="30" type="button">Time 30</button>
+          <button class="tab-btn" data-duration="60" type="button">Time 60</button>
+        </aside>
+        <div class="leaderboard-main">
+          <div class="leaderboard-top">
+            <div>
+              <p class="eyebrow">All-time</p>
+              <h2 id="leaderboardTitle">Time 15 Leaderboard</h2>
+            </div>
+            <button id="closeLeaderboardBtn" class="chip ghost" type="button">Close</button>
+          </div>
+          <div class="leaderboard-table">
+            <div class="leaderboard-head">
+              <span>#</span>
+              <span>Name</span>
+              <span>WPM</span>
+              <span>Accuracy</span>
+              <span>Date</span>
+            </div>
+            <ol id="leaderboardList" class="leaderboard-rows"></ol>
+          </div>
         </div>
       </div>
     </div>

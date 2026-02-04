@@ -487,51 +487,103 @@ body {
   fill: #f5ede2;
 }
 
-.leaderboard {
-  background: #ffffff;
-  border-radius: 22px;
-  padding: 20px 24px;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+.leaderboard-overlay.show {
+  background: rgba(11, 11, 11, 0.6);
+}
+
+.leaderboard-card {
+  background: #d6b58f;
+  border-radius: 28px;
+  padding: 24px;
+  width: min(980px, 94vw);
+  min-height: 70vh;
   display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 20px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+}
+
+.leaderboard-tabs {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 22px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.tab-btn {
+  border: none;
+  background: rgba(0, 0, 0, 0.25);
+  color: #f5ede2;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+}
+
+.tab-btn.active {
+  background: #0b0b0b;
+  color: #f5ede2;
+}
+
+.leaderboard-main {
+  display: grid;
+  gap: 16px;
+}
+
+.leaderboard-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 12px;
 }
 
-.leaderboard-header h2 {
-  font-size: 1.4rem;
-  margin-bottom: 4px;
-}
-
-.leaderboard-list {
-  list-style: none;
+.leaderboard-table {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  padding: 16px;
   display: grid;
-  gap: 8px;
-}
-
-.leaderboard-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #f6f4f1;
-  padding: 10px 14px;
-  border-radius: 16px;
-  font-size: 0.95rem;
-}
-
-.leaderboard-left {
-  display: flex;
-  align-items: center;
   gap: 10px;
 }
 
-.leaderboard-left img {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  object-fit: cover;
+.leaderboard-head {
+  display: grid;
+  grid-template-columns: 40px 1fr 100px 110px 140px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(0, 0, 0, 0.65);
 }
 
-.leaderboard-score {
-  font-weight: 600;
+.leaderboard-rows {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 100px 110px 140px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+}
+
+.leaderboard-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.leaderboard-name img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 @media (max-width: 720px) {
