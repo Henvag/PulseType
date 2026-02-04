@@ -147,6 +147,8 @@ let wordStates = [];
 let wpmHistory = [];
 let lastSampleSecond = -1;
 let currentUser = null;
+let restartArmed = false;
+let restartTimer = null;
 
 function shuffleArray(list) {
   const copy = [...list];
@@ -546,6 +548,28 @@ function gradeWord(typedValue) {
   };
 }
 
+function armRestart() {
+  restartArmed = true;
+  clearTimeout(restartTimer);
+  restartTimer = setTimeout(() => {
+    restartArmed = false;
+  }, 1200);
+}
+
+function attemptRestart(key) {
+  if (key === "Tab") {
+    armRestart();
+    return true;
+  }
+  if (key === "Enter" && restartArmed) {
+    restartArmed = false;
+    resetTest();
+    inputEl.focus();
+    return true;
+  }
+  return false;
+}
+
 inputEl.addEventListener("input", (event) => {
   if (isFinished) return;
 
@@ -580,24 +604,15 @@ inputEl.addEventListener("input", (event) => {
 });
 
 inputEl.addEventListener("keydown", (event) => {
-  if (event.key === "Tab") {
+  if (attemptRestart(event.key)) {
     event.preventDefault();
-    resetTest();
-    inputEl.focus();
-  }
-  if (event.key === "Enter") {
-    event.preventDefault();
-    resetTest();
-    inputEl.focus();
   }
 });
 
 document.addEventListener("keydown", (event) => {
   if (isFinished) return;
-  if (event.key === "Tab" || event.key === "Enter") {
+  if (attemptRestart(event.key)) {
     event.preventDefault();
-    resetTest();
-    inputEl.focus();
     return;
   }
   if (document.activeElement !== inputEl && event.key.length === 1) {
