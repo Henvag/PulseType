@@ -77,13 +77,29 @@ body {
   position: absolute;
   top: 56px;
   right: 0;
-  display: grid;
-  gap: 8px;
+  display: flex;
+  gap: 10px;
   background: #ffffff;
-  padding: 12px;
+  padding: 10px 12px;
   border-radius: 16px;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
   z-index: 5;
+}
+
+.icon-login {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #f6f4f1;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.icon-login svg {
+  width: 20px;
+  height: 20px;
+  fill: #0b0b0b;
 }
 
 .eyebrow {
@@ -297,6 +313,10 @@ body {
   pointer-events: all;
 }
 
+.overlay.profile.show {
+  background: rgba(11, 11, 11, 0.55);
+}
+
 .overlay-card {
   background: #ffffff;
   border-radius: 24px;
@@ -335,9 +355,10 @@ body {
 .profile-card {
   background: #ffffff;
   border-radius: 26px;
-  padding: 28px 32px;
+  padding: 32px 36px;
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
-  width: min(680px, 92vw);
+  width: min(900px, 94vw);
+  min-height: 70vh;
   display: grid;
   gap: 20px;
 }
