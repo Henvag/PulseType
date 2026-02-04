@@ -37,6 +37,7 @@ const keyboardCustomInput = document.getElementById("keyboardCustomInput");
 const keyboardCustomSave = document.getElementById("keyboardCustomSave");
 const loginOverlay = document.getElementById("loginOverlay");
 const closeLoginBtn = document.getElementById("closeLoginBtn");
+const logo = document.getElementById("logo");
 
 const WORD_BANK = [
   "neon",
@@ -189,9 +190,11 @@ function renderWords() {
   const windowStart = Math.min(Math.max(currentIndex - halfWindow, 0), maxStart);
   const visibleWords = words.slice(windowStart, windowStart + visibleCount);
   visibleWords.forEach((word, index) => {
+    const delay = index * 0.02;
     const absoluteIndex = windowStart + index;
     const wordEl = document.createElement("span");
     wordEl.className = "word";
+    wordEl.style.animationDelay = `${delay}s`;
     if (absoluteIndex === currentIndex) {
       wordEl.classList.add("active");
     } else if (absoluteIndex > currentIndex) {
@@ -214,6 +217,9 @@ function renderWords() {
     }
     testEl.appendChild(wordEl);
   });
+  testEl.classList.remove("fade");
+  void testEl.offsetWidth;
+  testEl.classList.add("fade");
 }
 
 function setTime(seconds) {
@@ -694,6 +700,11 @@ document.addEventListener("click", () => {
 });
 
 resetBtn.addEventListener("click", () => {
+  resetTest();
+  inputEl.focus();
+});
+
+logo.addEventListener("click", () => {
   resetTest();
   inputEl.focus();
 });
