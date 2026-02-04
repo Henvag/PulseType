@@ -45,6 +45,12 @@ body {
   gap: 16px;
 }
 
+.hero-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .auth {
   display: flex;
   gap: 12px;
