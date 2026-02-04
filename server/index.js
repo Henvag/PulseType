@@ -60,18 +60,19 @@ passport.deserializeUser(async (id, done) => {
 });
 
 const LEVEL_TITLES = [
-  { level: 2, title: "Apprentice" },
-  { level: 4, title: "Journeyman" },
-  { level: 6, title: "Adept" },
-  { level: 8, title: "Crafted" },
-  { level: 10, title: "Master Typist" },
+  { level: 2, title: "Faint Pulse" },
+  { level: 4, title: "Stable Pulse" },
+  { level: 6, title: "Accelerated Pulse" },
+  { level: 8, title: "Tachycardic" },
+  { level: 10, title: "Peak BPM" },
 ];
 
 const SPEED_TITLES = [
-  { wpm: 80, title: "Swift Fingers" },
-  { wpm: 100, title: "Velocity" },
-  { wpm: 120, title: "Overclocked" },
-  { wpm: 140, title: "Warp" },
+  { wpm: 60, title: "Stable Pulse" },
+  { wpm: 90, title: "Accelerated Pulse" },
+  { wpm: 120, title: "Tachycardic" },
+  { wpm: 140, title: "Peak BPM" },
+  { wpm: 170, title: "Arrhythmic" },
 ];
 
 function computeLevel(totalXp) {
