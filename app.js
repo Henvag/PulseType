@@ -29,9 +29,7 @@ const profileBest = document.getElementById("profileBest");
 const profileRecent = document.getElementById("profileRecent");
 const closeProfileBtn = document.getElementById("closeProfileBtn");
 const keyboardStatus = document.getElementById("keyboardStatus");
-const keyboardTabs = Array.from(document.querySelectorAll(".profile-keyboard .tab-btn"));
-const keyboardList = document.getElementById("keyboardList");
-const keyboardCustomBtn = document.getElementById("keyboardCustomBtn");
+const keyboardSelect = document.getElementById("keyboardSelect");
 const keyboardCustomWrap = document.getElementById("keyboardCustomWrap");
 const keyboardCustomInput = document.getElementById("keyboardCustomInput");
 const keyboardCustomSave = document.getElementById("keyboardCustomSave");
@@ -158,13 +156,7 @@ let currentUser = null;
 let restartArmed = false;
 let restartTimer = null;
 
-const KEYBOARD_CATALOG = {
-  Keychron: ["Q1 Max", "Q2", "Q3", "K6"],
-  Razer: ["Huntsman", "BlackWidow V4", "DeathStalker V2"],
-  Logitech: ["MX Mechanical", "G915", "G Pro X"],
-  Corsair: ["K70", "K65", "K100"],
-  Ducky: ["One 2", "One 3", "Mini"],
-};
+const KEYBOARD_CUSTOM_VALUE = "Unlisted / Custom";
 
 function shuffleArray(list) {
   const copy = [...list];
@@ -499,34 +491,8 @@ async function loadProfile() {
     });
   }
 
-  const activeBrand = keyboardTabs.find((tab) => tab.classList.contains("active"))?.dataset.brand || "All";
-  buildKeyboardList(activeBrand, currentUser.keyboardModel || "");
-  if (currentUser.keyboardModel && !Object.values(KEYBOARD_CATALOG).flat().some((m) => currentUser.keyboardModel.endsWith(m))) {
-    keyboardCustomInput.value = currentUser.keyboardModel;
-    keyboardCustomWrap.classList.remove("hidden");
-  }
-}
-
-function buildKeyboardList(brand = "All", activeValue = "") {
-  keyboardList.innerHTML = "";
-  const entries =
-    brand === "All"
-      ? Object.entries(KEYBOARD_CATALOG).flatMap(([key, models]) =>
-          models.map((model) => `${key} ${model}`)
-        )
-      : (KEYBOARD_CATALOG[brand] || []).map((model) => `${brand} ${model}`);
-
-  entries.forEach((label) => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "keyboard-option";
-    btn.textContent = label;
-    if (label === activeValue) {
-      btn.classList.add("active");
-    }
-    btn.addEventListener("click", () => saveKeyboard(label));
-    keyboardList.appendChild(btn);
-  });
+  keyboardSelect.value = currentUser.keyboardModel || "";
+  keyboardCustomWrap.classList.add("hidden");
 }
 
 async function saveKeyboard(label) {
@@ -541,10 +507,6 @@ async function saveKeyboard(label) {
   keyboardStatus.textContent = data.keyboardModel
     ? `Using ${data.keyboardModel}`
     : "Choose your keyboard to display it on your profile.";
-  buildKeyboardList(
-    keyboardTabs.find((tab) => tab.classList.contains("active"))?.dataset.brand || "All",
-    currentUser.keyboardModel || ""
-  );
 }
 
 function openProfile() {
@@ -759,16 +721,20 @@ profileOverlay.addEventListener("click", (event) => {
 
 closeProfileBtn.addEventListener("click", closeProfile);
 
-keyboardTabs.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    keyboardTabs.forEach((btn) => btn.classList.remove("active"));
-    tab.classList.add("active");
-    buildKeyboardList(tab.dataset.brand, currentUser?.keyboardModel || "");
-  });
-});
-
-keyboardCustomBtn.addEventListener("click", () => {
-  keyboardCustomWrap.classList.toggle("hidden");
+keyboardSelect.addEventListener("change", () => {
+  if (!currentUser) return;
+  const value = keyboardSelect.value;
+  if (value === KEYBOARD_CUSTOM_VALUE) {
+    keyboardCustomWrap.classList.remove("hidden");
+    keyboardCustomInput.focus();
+    return;
+  }
+  keyboardCustomWrap.classList.add("hidden");
+  if (!value) {
+    saveKeyboard("");
+  } else {
+    saveKeyboard(value);
+  }
 });
 
 keyboardCustomSave.addEventListener("click", () => {
@@ -776,6 +742,7 @@ keyboardCustomSave.addEventListener("click", () => {
   if (!value) return;
   saveKeyboard(value);
   keyboardCustomWrap.classList.add("hidden");
+  keyboardSelect.value = value;
 });
 
 closeLeaderboardBtn.addEventListener("click", () => {

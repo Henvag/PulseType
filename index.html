@@ -119,17 +119,23 @@
           </div>
         </div>
         <div class="profile-keyboard">
-          <label>Keyboard</label>
-          <div class="keyboard-tabs">
-            <button class="tab-btn active" data-brand="All" type="button">All</button>
-            <button class="tab-btn" data-brand="Keychron" type="button">Keychron</button>
-            <button class="tab-btn" data-brand="Razer" type="button">Razer</button>
-            <button class="tab-btn" data-brand="Logitech" type="button">Logitech</button>
-            <button class="tab-btn" data-brand="Corsair" type="button">Corsair</button>
-            <button class="tab-btn" data-brand="Ducky" type="button">Ducky</button>
-          </div>
-          <div id="keyboardList" class="keyboard-list"></div>
-          <button id="keyboardCustomBtn" class="chip ghost" type="button">Unlisted / Custom</button>
+          <label for="keyboardSelect">Keyboard</label>
+          <select id="keyboardSelect">
+            <option value="">Select a keyboard</option>
+            <option>Keychron Q1 Max</option>
+            <option>Keychron Q2</option>
+            <option>Keychron Q3</option>
+            <option>Keychron K6</option>
+            <option>Razer Huntsman</option>
+            <option>Razer BlackWidow V4</option>
+            <option>Logitech MX Mechanical</option>
+            <option>Logitech G915</option>
+            <option>Corsair K70</option>
+            <option>Corsair K65</option>
+            <option>Ducky One 2</option>
+            <option>Ducky One 3</option>
+            <option>Unlisted / Custom</option>
+          </select>
           <div id="keyboardCustomWrap" class="keyboard-custom hidden">
             <input id="keyboardCustomInput" type="text" placeholder="Type your keyboard model" />
             <button id="keyboardCustomSave" class="chip" type="button">Save</button>

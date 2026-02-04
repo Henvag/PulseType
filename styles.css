@@ -473,33 +473,6 @@ kbd {
   font-weight: 600;
 }
 
-.keyboard-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.keyboard-list {
-  display: grid;
-  gap: 8px;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-}
-
-.keyboard-option {
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 10px 12px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.keyboard-option.active {
-  background: #0b0b0b;
-  color: #ffffff;
-  border-color: #0b0b0b;
-}
-
 .keyboard-custom {
   display: flex;
   gap: 8px;
@@ -508,6 +481,14 @@ kbd {
 
 .keyboard-custom input {
   flex: 1;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  background: #ffffff;
+}
+
+.profile-keyboard select {
   border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 10px 12px;
