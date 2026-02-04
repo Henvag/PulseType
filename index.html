@@ -199,6 +199,26 @@
       </div>
     </div>
 
+    <div id="publicProfileOverlay" class="overlay profile" aria-hidden="true">
+      <div class="profile-card" role="dialog" aria-modal="true" aria-labelledby="publicProfileTitle">
+        <div class="profile-header">
+          <div class="profile-user">
+            <img id="publicAvatar" class="hidden" alt="User avatar" />
+            <div>
+              <h2 id="publicProfileTitle">Profile</h2>
+              <p id="publicName">User</p>
+              <p id="publicKeyboard" class="profile-meta"></p>
+            </div>
+          </div>
+          <button id="closePublicProfileBtn" class="chip ghost" type="button">Close</button>
+        </div>
+        <div>
+          <h3>Best Scores</h3>
+          <ul id="publicBest" class="profile-list"></ul>
+        </div>
+      </div>
+    </div>
+
     <footer class="site-footer">
       <a class="footer-link" href="https://github.com/Henvag/PulseType" target="_blank" rel="noreferrer">
         <svg viewBox="0 0 24 24" aria-hidden="true">

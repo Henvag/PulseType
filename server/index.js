@@ -162,7 +162,7 @@ app.get("/api/leaderboard", async (req, res) => {
   const duration = Number(req.query.duration) || 15;
   const { rows } = await pool.query(
     `SELECT DISTINCT ON (s.user_id)
-            s.id, s.wpm, s.accuracy, s.chars_typed, s.duration_seconds, s.created_at,
+            s.id, s.user_id, s.wpm, s.accuracy, s.chars_typed, s.duration_seconds, s.created_at,
             u.display_name, u.avatar_url
      FROM scores s
      JOIN users u ON s.user_id = u.id
@@ -195,6 +195,37 @@ app.get("/api/me/scores", ensureAuth, async (req, res) => {
   );
 
   res.json({ best: bestRows, recent: recentRows });
+});
+
+app.get("/api/users/:id", async (req, res) => {
+  const userId = Number(req.params.id);
+  if (!Number.isInteger(userId)) {
+    return res.status(400).json({ error: "Invalid user" });
+  }
+  const { rows } = await pool.query(
+    "SELECT id, display_name, avatar_url, keyboard_model FROM users WHERE id = $1",
+    [userId]
+  );
+  const user = rows[0];
+  if (!user) return res.status(404).json({ error: "Not found" });
+
+  const { rows: bestRows } = await pool.query(
+    `SELECT wpm, accuracy, duration_seconds, created_at
+     FROM scores
+     WHERE user_id = $1 AND is_best = true
+     ORDER BY duration_seconds ASC`,
+    [userId]
+  );
+
+  res.json({
+    user: {
+      id: user.id,
+      displayName: user.display_name,
+      avatarUrl: user.avatar_url,
+      keyboardModel: user.keyboard_model,
+    },
+    best: bestRows,
+  });
 });
 
 app.put("/api/me/keyboard", ensureAuth, async (req, res) => {

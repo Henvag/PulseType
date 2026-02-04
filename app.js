@@ -21,6 +21,12 @@ const leaderboardOverlay = document.getElementById("leaderboardOverlay");
 const closeLeaderboardBtn = document.getElementById("closeLeaderboardBtn");
 const leaderboardTitle = document.getElementById("leaderboardTitle");
 const leaderboardTabs = Array.from(document.querySelectorAll(".tab-btn"));
+const publicProfileOverlay = document.getElementById("publicProfileOverlay");
+const publicAvatar = document.getElementById("publicAvatar");
+const publicName = document.getElementById("publicName");
+const publicKeyboard = document.getElementById("publicKeyboard");
+const publicBest = document.getElementById("publicBest");
+const closePublicProfileBtn = document.getElementById("closePublicProfileBtn");
 const profileOverlay = document.getElementById("profileOverlay");
 const profileAvatar = document.getElementById("profileAvatar");
 const profileName = document.getElementById("profileName");
@@ -413,8 +419,10 @@ async function loadLeaderboard(duration = 15) {
     const rank = document.createElement("span");
     rank.textContent = `${index + 1}`;
 
-    const name = document.createElement("div");
+    const name = document.createElement("button");
+    name.type = "button";
     name.className = "leaderboard-name";
+    name.dataset.userId = entry.user_id;
     if (entry.avatar_url) {
       const avatar = document.createElement("img");
       avatar.src = entry.avatar_url;
@@ -424,6 +432,7 @@ async function loadLeaderboard(duration = 15) {
     const label = document.createElement("span");
     label.textContent = entry.display_name;
     name.appendChild(label);
+    name.addEventListener("click", () => openPublicProfile(entry.user_id));
 
     const wpm = document.createElement("span");
     wpm.textContent = entry.wpm;
@@ -508,16 +517,26 @@ async function loadProfile() {
 
 async function saveKeyboard(label) {
   keyboardStatus.textContent = "Saving...";
-  const res = await fetch("/api/me/keyboard", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ keyboardModel: label }),
-  });
-  const data = await res.json();
-  currentUser.keyboardModel = data.keyboardModel;
-  keyboardStatus.textContent = data.keyboardModel
-    ? `Using ${data.keyboardModel}`
-    : "Choose your keyboard to display it on your profile.";
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+  try {
+    const res = await fetch("/api/me/keyboard", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ keyboardModel: label }),
+      signal: controller.signal,
+    });
+    if (!res.ok) throw new Error("Save failed");
+    const data = await res.json();
+    currentUser.keyboardModel = data.keyboardModel;
+    keyboardStatus.textContent = data.keyboardModel
+      ? `Using ${data.keyboardModel}`
+      : "Choose your keyboard to display it on your profile.";
+  } catch (err) {
+    keyboardStatus.textContent = "Save failed. Try again.";
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 function openProfile() {
@@ -528,6 +547,43 @@ function openProfile() {
 function closeProfile() {
   profileOverlay.classList.remove("show");
   profileOverlay.setAttribute("aria-hidden", "true");
+}
+
+function openPublicProfileOverlay() {
+  publicProfileOverlay.classList.add("show");
+  publicProfileOverlay.setAttribute("aria-hidden", "false");
+}
+
+function closePublicProfileOverlay() {
+  publicProfileOverlay.classList.remove("show");
+  publicProfileOverlay.setAttribute("aria-hidden", "true");
+}
+
+async function openPublicProfile(userId) {
+  const res = await fetch(`/api/users/${userId}`);
+  if (!res.ok) return;
+  const data = await res.json();
+  publicName.textContent = data.user.displayName;
+  publicKeyboard.textContent = data.user.keyboardModel
+    ? `Keyboard: ${data.user.keyboardModel}`
+    : "Keyboard: Unlisted";
+  if (data.user.avatarUrl) {
+    publicAvatar.src = data.user.avatarUrl;
+    publicAvatar.classList.remove("hidden");
+  } else {
+    publicAvatar.classList.add("hidden");
+  }
+  publicBest.innerHTML = "";
+  if (!data.best.length) {
+    publicBest.innerHTML = "<li>No scores yet.</li>";
+  } else {
+    data.best.forEach((entry) => {
+      const item = document.createElement("li");
+      item.textContent = `${entry.wpm} WPM · ${entry.accuracy}% · ${entry.duration_seconds}s`;
+      publicBest.appendChild(item);
+    });
+  }
+  openPublicProfileOverlay();
 }
 
 function gradeWord(typedValue) {
@@ -726,6 +782,13 @@ resultOverlay.addEventListener("click", (event) => {
 });
 
 closeProfileBtn.addEventListener("click", closeProfile);
+closePublicProfileBtn.addEventListener("click", closePublicProfileOverlay);
+
+publicProfileOverlay.addEventListener("click", (event) => {
+  if (event.target === publicProfileOverlay) {
+    closePublicProfileOverlay();
+  }
+});
 
 keyboardSelect.addEventListener("change", () => {
   if (!currentUser) return;

@@ -668,6 +668,11 @@ kbd {
   display: flex;
   align-items: center;
   gap: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
 }
 
 .leaderboard-name img {
