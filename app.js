@@ -30,7 +30,7 @@ const publicLevel = document.getElementById("publicLevel");
 const publicXpFill = document.getElementById("publicXpFill");
 const publicXpText = document.getElementById("publicXpText");
 const publicTitleLine = document.getElementById("publicTitleLine");
-const publicBest = document.getElementById("publicBest");
+const publicBestBar = document.getElementById("publicBestBar");
 const closePublicProfileBtn = document.getElementById("closePublicProfileBtn");
 const themeBtn = document.getElementById("themeBtn");
 const themeOverlay = document.getElementById("themeOverlay");
@@ -47,7 +47,7 @@ const profileXpFill = document.getElementById("profileXpFill");
 const profileXpText = document.getElementById("profileXpText");
 const profileTitleLine = document.getElementById("profileTitleLine");
 const titleSelect = document.getElementById("titleSelect");
-const profileBest = document.getElementById("profileBest");
+const profileBestBar = document.getElementById("profileBestBar");
 const profileRecent = document.getElementById("profileRecent");
 const closeProfileBtn = document.getElementById("closeProfileBtn");
 const keyboardStatus = document.getElementById("keyboardStatus");
@@ -676,18 +676,9 @@ async function loadProfile() {
 
   const res = await fetch("/api/me/scores");
   const data = await res.json();
-  profileBest.innerHTML = "";
+  profileBestBar.innerHTML = "";
   profileRecent.innerHTML = "";
-
-  if (!data.best.length) {
-    profileBest.innerHTML = "<li>No scores yet.</li>";
-  } else {
-    data.best.forEach((entry) => {
-      const item = document.createElement("li");
-      item.textContent = `${entry.wpm} WPM · ${entry.accuracy}% · ${entry.duration_seconds}s`;
-      profileBest.appendChild(item);
-    });
-  }
+  renderBestBar(profileBestBar, data.best);
 
   if (!data.recent.length) {
     profileRecent.innerHTML = "<li>No recent runs.</li>";
@@ -806,18 +797,31 @@ async function openPublicProfile(userId) {
   } else {
     publicAvatar.classList.add("hidden");
   }
-  publicBest.innerHTML = "";
-  if (!data.best.length) {
-    publicBest.innerHTML = "<li>No scores yet.</li>";
-  } else {
-    data.best.forEach((entry) => {
-      const item = document.createElement("li");
-      item.textContent = `${entry.wpm} WPM · ${entry.accuracy}% · ${entry.duration_seconds}s`;
-      publicBest.appendChild(item);
-    });
-  }
+  publicBestBar.innerHTML = "";
+  renderBestBar(publicBestBar, data.best);
 
   openPublicProfileOverlay();
+}
+
+function renderBestBar(container, bestScores) {
+  const durations = [15, 30, 60];
+  const lookup = new Map(bestScores.map((entry) => [entry.duration_seconds, entry]));
+  durations.forEach((seconds) => {
+    const entry = lookup.get(seconds);
+    const cell = document.createElement("div");
+    cell.className = "best-cell";
+    const time = document.createElement("div");
+    time.className = "best-time";
+    time.textContent = `${seconds} seconds`;
+    const wpm = document.createElement("div");
+    wpm.className = "best-wpm";
+    wpm.textContent = entry ? entry.wpm : "—";
+    const acc = document.createElement("div");
+    acc.className = "best-acc";
+    acc.textContent = entry ? `${entry.accuracy}%` : "";
+    cell.append(time, wpm, acc);
+    container.appendChild(cell);
+  });
 }
 
 function gradeWord(typedValue) {

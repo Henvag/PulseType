@@ -59,15 +59,8 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-const LEVEL_TITLES = [
-  { level: 2, title: "Faint Pulse" },
-  { level: 4, title: "Stable Pulse" },
-  { level: 6, title: "Accelerated Pulse" },
-  { level: 8, title: "Tachycardic" },
-  { level: 10, title: "Peak BPM" },
-];
-
 const SPEED_TITLES = [
+  { wpm: 40, title: "Faint Pulse" },
   { wpm: 60, title: "Stable Pulse" },
   { wpm: 90, title: "Accelerated Pulse" },
   { wpm: 120, title: "Tachycardic" },
@@ -345,9 +338,6 @@ app.post("/api/score", ensureAuth, async (req, res) => {
   const newLevel = computeLevel(newTotalXp);
   const unlocked = new Set(user?.unlocked_titles || []);
 
-  LEVEL_TITLES.forEach(({ level, title }) => {
-    if (newLevel >= level) unlocked.add(title);
-  });
   SPEED_TITLES.forEach(({ wpm: threshold, title }) => {
     if (wpm >= threshold) unlocked.add(title);
   });

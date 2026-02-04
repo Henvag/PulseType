@@ -460,6 +460,38 @@ kbd {
   gap: 18px;
 }
 
+.best-bar {
+  background: var(--surface-2);
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.best-cell {
+  text-align: center;
+  display: grid;
+  gap: 6px;
+}
+
+.best-time {
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.best-wpm {
+  font-size: 2.1rem;
+  font-weight: 700;
+}
+
+.best-acc {
+  font-size: 1.1rem;
+  color: var(--muted);
+}
+
 .profile-list {
   list-style: none;
   display: grid;
