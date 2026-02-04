@@ -223,7 +223,7 @@ function setTime(seconds) {
   timeEl.textContent = `${seconds}s`;
 }
 
-function resetTest() {
+function resetTest({ animate } = {}) {
   buildWords();
   currentIndex = 0;
   totalTyped = 0;
@@ -242,9 +242,13 @@ function resetTest() {
   resultOverlay.classList.remove("show");
   resultOverlay.setAttribute("aria-hidden", "true");
   renderWords();
-  testEl.classList.remove("fade");
-  void testEl.offsetWidth;
-  testEl.classList.add("fade");
+  if (animate) {
+    testEl.classList.remove("fade");
+    void testEl.offsetWidth;
+    testEl.classList.add("fade");
+  } else {
+    testEl.classList.remove("fade");
+  }
 }
 
 function updateStats() {
@@ -665,7 +669,7 @@ function attemptRestart(key) {
   }
   if (key === "Enter" && restartArmed) {
     restartArmed = false;
-    resetTest();
+    resetTest({ animate: true });
     inputEl.focus();
     return true;
   }
@@ -732,12 +736,12 @@ document.addEventListener("click", (event) => {
 });
 
 resetBtn.addEventListener("click", () => {
-  resetTest();
+  resetTest({ animate: true });
   inputEl.focus();
 });
 
 logo.addEventListener("click", () => {
-  resetTest();
+  resetTest({ animate: true });
   inputEl.focus();
 });
 
@@ -855,7 +859,7 @@ timeButtons.forEach((button) => {
     timeButtons.forEach((btn) => btn.classList.remove("active"));
     button.classList.add("active");
     setTime(Number(button.dataset.time));
-    resetTest();
+    resetTest({ animate: true });
     inputEl.focus();
   });
 });
