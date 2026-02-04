@@ -30,6 +30,7 @@ const pool = new pg.Pool({ connectionString: DATABASE_URL });
 
 const app = express();
 app.use(express.json());
+app.set("trust proxy", 1);
 
 app.use(
   session({
@@ -40,6 +41,7 @@ app.use(
       httpOnly: true,
       sameSite: "lax",
       secure: BASE_URL.startsWith("https://"),
+      maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
 );
