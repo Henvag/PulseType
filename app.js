@@ -549,7 +549,21 @@ async function loadLeaderboard(duration = 15) {
     item.className = "leaderboard-row";
 
     const rank = document.createElement("span");
-    rank.textContent = `${index + 1}`;
+    if (index === 0) {
+      rank.className = "leaderboard-rank";
+      rank.innerHTML = `
+        <svg viewBox="0 0 64 80" aria-hidden="true">
+          <path d="M32 6c13.25 0 24 10.75 24 24S45.25 54 32 54 8 43.25 8 30 18.75 6 32 6Z" fill="none" stroke="currentColor" stroke-width="6" />
+          <path d="M32 14c9.94 0 18 8.06 18 18S41.94 50 32 50 14 41.94 14 32 22.06 14 32 14Z" fill="none" stroke="currentColor" stroke-width="6" />
+          <path d="M29 21h6v24h-6z" fill="currentColor" />
+          <path d="M27 23l8-4v6l-8 4z" fill="currentColor" />
+          <path d="M8 52l-6 22 16-10 4-12z" fill="currentColor" />
+          <path d="M56 52l6 22-16-10-4-12z" fill="currentColor" />
+        </svg>
+      `;
+    } else {
+      rank.textContent = `${index + 1}`;
+    }
 
     const name = document.createElement("button");
     name.type = "button";
