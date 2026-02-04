@@ -192,12 +192,15 @@ body {
 .test {
   font-family: "IBM Plex Mono", "Courier New", monospace;
   font-size: 1.4rem;
-  line-height: 2;
+  --line-height: 2;
+  line-height: var(--line-height);
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   max-width: 760px;
   justify-content: center;
+  max-height: calc(var(--line-height) * 1em * 3);
+  overflow: hidden;
 }
 
 .test.fade .word {
