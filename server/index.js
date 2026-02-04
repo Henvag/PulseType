@@ -154,8 +154,9 @@ app.get("/api/me", (req, res) => {
     avatar_url: avatarUrl,
     provider,
     keyboard_model: keyboardModel,
+    created_at: createdAt,
   } = req.user;
-  return res.json({ user: { id, displayName, avatarUrl, provider, keyboardModel } });
+  return res.json({ user: { id, displayName, avatarUrl, provider, keyboardModel, createdAt } });
 });
 
 app.get("/api/leaderboard", async (req, res) => {
@@ -203,7 +204,7 @@ app.get("/api/users/:id", async (req, res) => {
     return res.status(400).json({ error: "Invalid user" });
   }
   const { rows } = await pool.query(
-    "SELECT id, display_name, avatar_url, keyboard_model FROM users WHERE id = $1",
+    "SELECT id, display_name, avatar_url, keyboard_model, created_at FROM users WHERE id = $1",
     [userId]
   );
   const user = rows[0];
@@ -223,6 +224,7 @@ app.get("/api/users/:id", async (req, res) => {
       displayName: user.display_name,
       avatarUrl: user.avatar_url,
       keyboardModel: user.keyboard_model,
+      createdAt: user.created_at,
     },
     best: bestRows,
   });

@@ -25,6 +25,7 @@ const publicProfileOverlay = document.getElementById("publicProfileOverlay");
 const publicAvatar = document.getElementById("publicAvatar");
 const publicName = document.getElementById("publicName");
 const publicKeyboard = document.getElementById("publicKeyboard");
+const publicJoin = document.getElementById("publicJoin");
 const publicBest = document.getElementById("publicBest");
 const closePublicProfileBtn = document.getElementById("closePublicProfileBtn");
 const themeBtn = document.getElementById("themeBtn");
@@ -36,6 +37,7 @@ const profileOverlay = document.getElementById("profileOverlay");
 const profileAvatar = document.getElementById("profileAvatar");
 const profileName = document.getElementById("profileName");
 const profileProvider = document.getElementById("profileProvider");
+const profileJoin = document.getElementById("profileJoin");
 const profileBest = document.getElementById("profileBest");
 const profileRecent = document.getElementById("profileRecent");
 const closeProfileBtn = document.getElementById("closeProfileBtn");
@@ -614,6 +616,12 @@ async function loadProfile() {
   if (!currentUser) return;
   profileName.textContent = currentUser.displayName;
   profileProvider.textContent = `Signed in with ${currentUser.provider}`;
+  if (currentUser.createdAt) {
+    const joinDate = new Date(currentUser.createdAt).toLocaleDateString();
+    profileJoin.textContent = `Joined ${joinDate}`;
+  } else {
+    profileJoin.textContent = "";
+  }
   keyboardStatus.textContent = currentUser.keyboardModel
     ? `Using ${currentUser.keyboardModel}`
     : "Choose your keyboard to display it on your profile.";
@@ -717,6 +725,12 @@ async function openPublicProfile(userId) {
   publicKeyboard.textContent = data.user.keyboardModel
     ? `Keyboard: ${data.user.keyboardModel}`
     : "Keyboard: Unlisted";
+  if (data.user.createdAt) {
+    const joinDate = new Date(data.user.createdAt).toLocaleDateString();
+    publicJoin.textContent = `Joined ${joinDate}`;
+  } else {
+    publicJoin.textContent = "";
+  }
   if (data.user.avatarUrl) {
     publicAvatar.src = data.user.avatarUrl;
     publicAvatar.classList.remove("hidden");
