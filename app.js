@@ -209,9 +209,6 @@ function renderWords() {
     }
     testEl.appendChild(wordEl);
   });
-  testEl.classList.remove("fade");
-  void testEl.offsetWidth;
-  testEl.classList.add("fade");
 }
 
 function setTime(seconds) {
@@ -238,6 +235,9 @@ function resetTest() {
   resultOverlay.classList.remove("show");
   resultOverlay.setAttribute("aria-hidden", "true");
   renderWords();
+  testEl.classList.remove("fade");
+  void testEl.offsetWidth;
+  testEl.classList.add("fade");
 }
 
 function updateStats() {
