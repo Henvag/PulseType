@@ -599,6 +599,7 @@ kbd {
   border-radius: 12px;
   background: var(--surface-2);
   cursor: pointer;
+  color: var(--text);
 }
 
 .theme-swatch {
