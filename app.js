@@ -27,6 +27,8 @@ const profileProvider = document.getElementById("profileProvider");
 const profileBest = document.getElementById("profileBest");
 const profileRecent = document.getElementById("profileRecent");
 const closeProfileBtn = document.getElementById("closeProfileBtn");
+const loginOverlay = document.getElementById("loginOverlay");
+const closeLoginBtn = document.getElementById("closeLoginBtn");
 
 const WORD_BANK = [
   "neon",
@@ -615,7 +617,8 @@ userBtn.addEventListener("click", () => {
     loadProfile();
     openProfile();
   } else {
-    loginMenu.classList.toggle("hidden");
+    loginOverlay.classList.add("show");
+    loginOverlay.setAttribute("aria-hidden", "false");
   }
 });
 
@@ -642,6 +645,18 @@ profileOverlay.addEventListener("click", (event) => {
 });
 
 closeProfileBtn.addEventListener("click", closeProfile);
+
+loginOverlay.addEventListener("click", (event) => {
+  if (event.target === loginOverlay) {
+    loginOverlay.classList.remove("show");
+    loginOverlay.setAttribute("aria-hidden", "true");
+  }
+});
+
+closeLoginBtn.addEventListener("click", () => {
+  loginOverlay.classList.remove("show");
+  loginOverlay.setAttribute("aria-hidden", "true");
+});
 
 timeButtons.forEach((button) => {
   button.addEventListener("click", () => {
