@@ -163,6 +163,27 @@ app.get("/api/leaderboard", async (_req, res) => {
   res.json({ scores: rows });
 });
 
+app.get("/api/me/scores", ensureAuth, async (req, res) => {
+  const { rows: bestRows } = await pool.query(
+    `SELECT wpm, accuracy, chars_typed, duration_seconds, created_at
+     FROM scores
+     WHERE user_id = $1 AND is_best = true
+     ORDER BY duration_seconds ASC`,
+    [req.user.id]
+  );
+
+  const { rows: recentRows } = await pool.query(
+    `SELECT wpm, accuracy, chars_typed, duration_seconds, created_at
+     FROM scores
+     WHERE user_id = $1
+     ORDER BY created_at DESC
+     LIMIT 8`,
+    [req.user.id]
+  );
+
+  res.json({ best: bestRows, recent: recentRows });
+});
+
 app.post("/api/score", ensureAuth, async (req, res) => {
   const { wpm, accuracy, charsTyped, durationSeconds } = req.body || {};
   if (

@@ -14,15 +14,19 @@ const resultWords = document.getElementById("resultWords");
 const resultChars = document.getElementById("resultChars");
 const resultChart = document.getElementById("resultChart");
 const retryBtn = document.getElementById("retryBtn");
-const userBadge = document.getElementById("userBadge");
-const userAvatar = document.getElementById("userAvatar");
-const userName = document.getElementById("userName");
 const loginMenu = document.getElementById("loginMenu");
 const logoutBtn = document.getElementById("logoutBtn");
 const leaderboardList = document.getElementById("leaderboardList");
 const userBtn = document.getElementById("userBtn");
 const leaderboardBtn = document.getElementById("leaderboardBtn");
 const leaderboardSection = document.getElementById("leaderboard");
+const profileOverlay = document.getElementById("profileOverlay");
+const profileAvatar = document.getElementById("profileAvatar");
+const profileName = document.getElementById("profileName");
+const profileProvider = document.getElementById("profileProvider");
+const profileBest = document.getElementById("profileBest");
+const profileRecent = document.getElementById("profileRecent");
+const closeProfileBtn = document.getElementById("closeProfileBtn");
 
 const WORD_BANK = [
   "neon",
@@ -375,17 +379,8 @@ async function loadMe() {
   const data = await res.json();
   currentUser = data.user;
   if (currentUser) {
-    userBadge.classList.remove("hidden");
     loginMenu.classList.add("hidden");
-    userName.textContent = currentUser.displayName;
-    if (currentUser.avatarUrl) {
-      userAvatar.src = currentUser.avatarUrl;
-      userAvatar.classList.remove("hidden");
-    } else {
-      userAvatar.classList.add("hidden");
-    }
   } else {
-    userBadge.classList.add("hidden");
     loginMenu.classList.add("hidden");
   }
 }
@@ -427,6 +422,53 @@ async function submitScore(payload) {
   } catch (err) {
     console.error(err);
   }
+}
+
+async function loadProfile() {
+  if (!currentUser) return;
+  profileName.textContent = currentUser.displayName;
+  profileProvider.textContent = `Signed in with ${currentUser.provider}`;
+  if (currentUser.avatarUrl) {
+    profileAvatar.src = currentUser.avatarUrl;
+    profileAvatar.classList.remove("hidden");
+  } else {
+    profileAvatar.classList.add("hidden");
+  }
+
+  const res = await fetch("/api/me/scores");
+  const data = await res.json();
+  profileBest.innerHTML = "";
+  profileRecent.innerHTML = "";
+
+  if (!data.best.length) {
+    profileBest.innerHTML = "<li>No scores yet.</li>";
+  } else {
+    data.best.forEach((entry) => {
+      const item = document.createElement("li");
+      item.textContent = `${entry.wpm} WPM · ${entry.accuracy}% · ${entry.duration_seconds}s`;
+      profileBest.appendChild(item);
+    });
+  }
+
+  if (!data.recent.length) {
+    profileRecent.innerHTML = "<li>No recent runs.</li>";
+  } else {
+    data.recent.forEach((entry) => {
+      const item = document.createElement("li");
+      item.textContent = `${entry.wpm} WPM · ${entry.accuracy}% · ${entry.duration_seconds}s`;
+      profileRecent.appendChild(item);
+    });
+  }
+}
+
+function openProfile() {
+  profileOverlay.classList.add("show");
+  profileOverlay.setAttribute("aria-hidden", "false");
+}
+
+function closeProfile() {
+  profileOverlay.classList.remove("show");
+  profileOverlay.setAttribute("aria-hidden", "true");
 }
 
 function gradeWord(typedValue) {
@@ -565,11 +607,13 @@ retryBtn.addEventListener("click", () => {
 logoutBtn.addEventListener("click", async () => {
   await fetch("/auth/logout", { method: "POST" });
   await loadMe();
+  closeProfile();
 });
 
 userBtn.addEventListener("click", () => {
   if (currentUser) {
-    userBadge.classList.toggle("hidden");
+    loadProfile();
+    openProfile();
   } else {
     loginMenu.classList.toggle("hidden");
   }
@@ -581,7 +625,6 @@ leaderboardBtn.addEventListener("click", () => {
 
 document.addEventListener("click", (event) => {
   if (event.target.closest(".auth")) return;
-  userBadge.classList.add("hidden");
   loginMenu.classList.add("hidden");
 });
 
@@ -591,6 +634,14 @@ resultOverlay.addEventListener("click", (event) => {
     inputEl.focus();
   }
 });
+
+profileOverlay.addEventListener("click", (event) => {
+  if (event.target === profileOverlay) {
+    closeProfile();
+  }
+});
+
+closeProfileBtn.addEventListener("click", closeProfile);
 
 timeButtons.forEach((button) => {
   button.addEventListener("click", () => {
