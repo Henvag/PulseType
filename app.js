@@ -28,8 +28,13 @@ const profileProvider = document.getElementById("profileProvider");
 const profileBest = document.getElementById("profileBest");
 const profileRecent = document.getElementById("profileRecent");
 const closeProfileBtn = document.getElementById("closeProfileBtn");
-const keyboardSelect = document.getElementById("keyboardSelect");
 const keyboardStatus = document.getElementById("keyboardStatus");
+const keyboardTabs = Array.from(document.querySelectorAll(".profile-keyboard .tab-btn"));
+const keyboardList = document.getElementById("keyboardList");
+const keyboardCustomBtn = document.getElementById("keyboardCustomBtn");
+const keyboardCustomWrap = document.getElementById("keyboardCustomWrap");
+const keyboardCustomInput = document.getElementById("keyboardCustomInput");
+const keyboardCustomSave = document.getElementById("keyboardCustomSave");
 const loginOverlay = document.getElementById("loginOverlay");
 const closeLoginBtn = document.getElementById("closeLoginBtn");
 
@@ -151,6 +156,14 @@ let lastSampleSecond = -1;
 let currentUser = null;
 let restartArmed = false;
 let restartTimer = null;
+
+const KEYBOARD_CATALOG = {
+  Keychron: ["Q1 Max", "Q2", "Q3", "K6"],
+  Razer: ["Huntsman", "BlackWidow V4", "DeathStalker V2"],
+  Logitech: ["MX Mechanical", "G915", "G Pro X"],
+  Corsair: ["K70", "K65", "K100"],
+  Ducky: ["One 2", "One 3", "Mini"],
+};
 
 function shuffleArray(list) {
   const copy = [...list];
@@ -445,7 +458,6 @@ async function loadProfile() {
   if (!currentUser) return;
   profileName.textContent = currentUser.displayName;
   profileProvider.textContent = `Signed in with ${currentUser.provider}`;
-  keyboardSelect.value = currentUser.keyboardModel || "";
   keyboardStatus.textContent = currentUser.keyboardModel
     ? `Using ${currentUser.keyboardModel}`
     : "Choose your keyboard to display it on your profile.";
@@ -480,6 +492,53 @@ async function loadProfile() {
       profileRecent.appendChild(item);
     });
   }
+
+  const activeBrand = keyboardTabs.find((tab) => tab.classList.contains("active"))?.dataset.brand || "All";
+  buildKeyboardList(activeBrand, currentUser.keyboardModel || "");
+  if (currentUser.keyboardModel && !Object.values(KEYBOARD_CATALOG).flat().some((m) => currentUser.keyboardModel.endsWith(m))) {
+    keyboardCustomInput.value = currentUser.keyboardModel;
+    keyboardCustomWrap.classList.remove("hidden");
+  }
+}
+
+function buildKeyboardList(brand = "All", activeValue = "") {
+  keyboardList.innerHTML = "";
+  const entries =
+    brand === "All"
+      ? Object.entries(KEYBOARD_CATALOG).flatMap(([key, models]) =>
+          models.map((model) => `${key} ${model}`)
+        )
+      : (KEYBOARD_CATALOG[brand] || []).map((model) => `${brand} ${model}`);
+
+  entries.forEach((label) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "keyboard-option";
+    btn.textContent = label;
+    if (label === activeValue) {
+      btn.classList.add("active");
+    }
+    btn.addEventListener("click", () => saveKeyboard(label));
+    keyboardList.appendChild(btn);
+  });
+}
+
+async function saveKeyboard(label) {
+  keyboardStatus.textContent = "Saving...";
+  const res = await fetch("/api/me/keyboard", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ keyboardModel: label }),
+  });
+  const data = await res.json();
+  currentUser.keyboardModel = data.keyboardModel;
+  keyboardStatus.textContent = data.keyboardModel
+    ? `Using ${data.keyboardModel}`
+    : "Choose your keyboard to display it on your profile.";
+  buildKeyboardList(
+    keyboardTabs.find((tab) => tab.classList.contains("active"))?.dataset.brand || "All",
+    currentUser.keyboardModel || ""
+  );
 }
 
 function openProfile() {
@@ -689,20 +748,23 @@ profileOverlay.addEventListener("click", (event) => {
 
 closeProfileBtn.addEventListener("click", closeProfile);
 
-keyboardSelect.addEventListener("change", async () => {
-  if (!currentUser) return;
-  const keyboardModel = keyboardSelect.value;
-  keyboardStatus.textContent = "Saving...";
-  const res = await fetch("/api/me/keyboard", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ keyboardModel }),
+keyboardTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    keyboardTabs.forEach((btn) => btn.classList.remove("active"));
+    tab.classList.add("active");
+    buildKeyboardList(tab.dataset.brand, currentUser?.keyboardModel || "");
   });
-  const data = await res.json();
-  currentUser.keyboardModel = data.keyboardModel;
-  keyboardStatus.textContent = data.keyboardModel
-    ? `Using ${data.keyboardModel}`
-    : "Choose your keyboard to display it on your profile.";
+});
+
+keyboardCustomBtn.addEventListener("click", () => {
+  keyboardCustomWrap.classList.toggle("hidden");
+});
+
+keyboardCustomSave.addEventListener("click", () => {
+  const value = keyboardCustomInput.value.trim();
+  if (!value) return;
+  saveKeyboard(value);
+  keyboardCustomWrap.classList.add("hidden");
 });
 
 closeLeaderboardBtn.addEventListener("click", () => {
