@@ -148,6 +148,7 @@ const WORD_BANK = [
 
 let words = [];
 let currentIndex = 0;
+let windowStartIndex = 0;
 let startTime = null;
 let timerId = null;
 let timeLimit = 15;
@@ -179,14 +180,14 @@ function buildWords() {
   const extra = shuffleArray(WORD_BANK);
   words = [...shuffled, ...extra].slice(0, 80);
   wordStates = Array(words.length).fill(null);
+  windowStartIndex = 0;
 }
 
 function renderWords() {
-  const visibleCount = 12;
+  const visibleCount = 60;
   testEl.innerHTML = "";
-  const halfWindow = Math.floor(visibleCount / 2);
   const maxStart = Math.max(words.length - visibleCount, 0);
-  const windowStart = Math.min(Math.max(currentIndex - halfWindow, 0), maxStart);
+  const windowStart = Math.min(windowStartIndex, maxStart);
   const visibleWords = words.slice(windowStart, windowStart + visibleCount);
   visibleWords.forEach((word, index) => {
     const delay = index * 0.02;
@@ -255,6 +256,30 @@ function updateStats() {
 
 function updateActiveWord() {
   renderWords();
+}
+
+function adjustWindowForLines() {
+  const wordEls = Array.from(testEl.querySelectorAll(".word"));
+  if (!wordEls.length) return;
+  const baseIndex = windowStartIndex;
+  const lineStarts = [];
+  let lastTop = null;
+  wordEls.forEach((el, idx) => {
+    const top = el.offsetTop;
+    if (lastTop == null || top > lastTop) {
+      lineStarts.push(baseIndex + idx);
+      lastTop = top;
+    }
+  });
+  const currentLineIndex = lineStarts
+    .map((start, i) => ({ start, i }))
+    .filter(({ start }) => currentIndex >= start)
+    .pop()?.i ?? 0;
+
+  if (currentLineIndex >= 2 && lineStarts[1] != null) {
+    windowStartIndex = lineStarts[1];
+    renderWords();
+  }
 }
 
 function finishTest() {
@@ -694,6 +719,7 @@ inputEl.addEventListener("input", (event) => {
     }
 
     updateActiveWord();
+    adjustWindowForLines();
     inputEl.value = "";
     updateStats();
     return;
