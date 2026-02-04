@@ -199,7 +199,7 @@ body {
   gap: 8px;
   max-width: 760px;
   justify-content: center;
-  max-height: calc(var(--line-height) * 1em * 3 + 12px);
+  max-height: calc(var(--line-height) * 1em * 3 + 24px);
   overflow: hidden;
 }
 
