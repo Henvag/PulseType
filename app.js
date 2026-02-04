@@ -3,8 +3,6 @@ const inputEl = document.getElementById("input");
 const wpmEl = document.getElementById("wpm");
 const accuracyEl = document.getElementById("accuracy");
 const timeEl = document.getElementById("time");
-const sessionLine = document.getElementById("sessionLine");
-const nextBtn = document.getElementById("nextBtn");
 const resetBtn = document.getElementById("resetBtn");
 const timeButtons = Array.from(document.querySelectorAll(".chip[data-time]"));
 const resultOverlay = document.getElementById("resultOverlay");
@@ -222,7 +220,6 @@ function resetTest() {
   timerId = null;
   setTime(timeLimit);
   updateStats();
-  sessionLine.textContent = "Start typing to see your stats.";
   resultOverlay.classList.remove("show");
   resultOverlay.setAttribute("aria-hidden", "true");
   renderWords();
@@ -250,7 +247,6 @@ function finishTest() {
   const wpm = elapsed > 0 ? Math.round((totalCorrect / 5) / (elapsed / 60)) : 0;
   const accuracy = totalTyped > 0 ? Math.round((totalCorrect / totalTyped) * 100) : 100;
 
-  sessionLine.textContent = `Finished! ${completedWords} words, ${wpm} WPM, ${accuracy}% accuracy.`;
   resultWpm.textContent = `WPM: ${wpm}`;
   resultAccuracy.textContent = `Accuracy: ${accuracy}%`;
   resultWords.textContent = `Words: ${completedWords}`;
@@ -586,11 +582,24 @@ inputEl.addEventListener("input", (event) => {
 inputEl.addEventListener("keydown", (event) => {
   if (event.key === "Tab") {
     event.preventDefault();
+    resetTest();
+    inputEl.focus();
+  }
+  if (event.key === "Enter") {
+    event.preventDefault();
+    resetTest();
+    inputEl.focus();
   }
 });
 
 document.addEventListener("keydown", (event) => {
   if (isFinished) return;
+  if (event.key === "Tab" || event.key === "Enter") {
+    event.preventDefault();
+    resetTest();
+    inputEl.focus();
+    return;
+  }
   if (document.activeElement !== inputEl && event.key.length === 1) {
     inputEl.focus();
     inputEl.value += event.key;
@@ -601,13 +610,6 @@ document.addEventListener("keydown", (event) => {
 
 document.addEventListener("click", () => {
   if (isFinished) return;
-  inputEl.focus();
-});
-
-nextBtn.addEventListener("click", () => {
-  buildWords();
-  renderWords();
-  inputEl.value = "";
   inputEl.focus();
 });
 

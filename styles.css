@@ -186,6 +186,24 @@ body {
   justify-content: center;
 }
 
+.kbd-hint {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+kbd {
+  font-family: "IBM Plex Mono", "Courier New", monospace;
+  font-size: 0.85rem;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: #0b0b0b;
+  color: #ffffff;
+  margin: 0 4px;
+  display: inline-block;
+}
+
 .word {
   padding: 4px 6px;
   border-radius: 8px;
