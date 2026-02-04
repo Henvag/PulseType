@@ -190,7 +190,7 @@ app.get("/api/me/scores", ensureAuth, async (req, res) => {
      FROM scores
      WHERE user_id = $1
      ORDER BY created_at DESC
-     LIMIT 8`,
+     LIMIT 5`,
     [req.user.id]
   );
 
