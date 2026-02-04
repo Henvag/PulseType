@@ -40,15 +40,19 @@ body {
 .hero {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   flex-wrap: wrap;
   gap: 16px;
 }
 
-.hero-right {
+.hero-left {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+.auth {
+  align-self: center;
 }
 
 .auth {
