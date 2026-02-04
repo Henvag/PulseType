@@ -177,6 +177,7 @@ body {
   cursor: pointer;
   background: var(--surface);
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+  color: var(--text);
 }
 
 .chip.active {
@@ -491,6 +492,7 @@ kbd {
   padding: 10px 12px;
   font-size: 0.95rem;
   background: var(--surface);
+  color: var(--text);
 }
 
 .profile-keyboard select {
@@ -499,6 +501,7 @@ kbd {
   padding: 10px 12px;
   font-size: 0.95rem;
   background: var(--surface);
+  color: var(--text);
 }
 
 .login-card {
@@ -536,7 +539,7 @@ kbd {
   background: var(--surface-2);
   font-weight: 600;
   text-decoration: none;
-  color: inherit;
+  color: var(--text);
 }
 
 .login-icon {
@@ -734,6 +737,7 @@ kbd {
   padding: 10px 12px;
   font-size: 0.95rem;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+  color: var(--text);
 }
 
 .leaderboard-rank svg {
@@ -752,6 +756,7 @@ kbd {
   padding: 0;
   cursor: pointer;
   text-align: left;
+  color: var(--text);
 }
 
 .leaderboard-name img {

@@ -862,6 +862,9 @@ inputEl.addEventListener("keydown", (event) => {
 
 document.addEventListener("keydown", (event) => {
   if (isFinished) return;
+  if (document.activeElement && document.activeElement.closest(".overlay")) {
+    return;
+  }
   if (attemptRestart(event.key)) {
     event.preventDefault();
     return;
