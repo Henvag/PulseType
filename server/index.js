@@ -161,16 +161,19 @@ app.get("/api/me", (req, res) => {
 app.get("/api/leaderboard", async (req, res) => {
   const duration = Number(req.query.duration) || 15;
   const { rows } = await pool.query(
-    `SELECT s.id, s.wpm, s.accuracy, s.chars_typed, s.duration_seconds, s.created_at,
+    `SELECT DISTINCT ON (s.user_id)
+            s.id, s.wpm, s.accuracy, s.chars_typed, s.duration_seconds, s.created_at,
             u.display_name, u.avatar_url
      FROM scores s
      JOIN users u ON s.user_id = u.id
-     WHERE s.is_best = true AND s.duration_seconds = $1
-     ORDER BY s.wpm DESC, s.accuracy DESC
-     LIMIT 25;`,
+     WHERE s.duration_seconds = $1
+     ORDER BY s.user_id, s.wpm DESC, s.accuracy DESC, s.created_at DESC`,
     [duration]
   );
-  res.json({ scores: rows, duration });
+  const ranked = rows
+    .sort((a, b) => b.wpm - a.wpm || b.accuracy - a.accuracy)
+    .slice(0, 25);
+  res.json({ scores: ranked, duration });
 });
 
 app.get("/api/me/scores", ensureAuth, async (req, res) => {
