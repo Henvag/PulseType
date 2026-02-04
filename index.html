@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PulseType</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Typing Lab</p>
+          <h1>PulseType</h1>
+        </div>
+        <div class="auth">
+          <button id="leaderboardBtn" class="icon-btn" type="button" aria-label="Leaderboard">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 20h16v-2H4v2zm2-4h3V8H6v8zm5 0h3V4h-3v12zm5 0h3v-6h-3v6z"></path>
+            </svg>
+          </button>
+
+          <button id="userBtn" class="icon-btn" type="button" aria-label="Account">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4 0-7 2-7 4v2h14v-2c0-2-3-4-7-4Z"></path>
+            </svg>
+          </button>
+
+          <div id="userBadge" class="user-badge hidden">
+            <img id="userAvatar" class="hidden" alt="User avatar" />
+            <span id="userName"></span>
+            <button id="logoutBtn" class="chip ghost" type="button">Log out</button>
+          </div>
+
+          <div id="loginMenu" class="login-menu hidden">
+            <a class="chip" href="/auth/google">Continue with Google</a>
+            <a class="chip" href="/auth/github">Continue with GitHub</a>
+          </div>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">WPM</span>
+            <span id="wpm" class="stat-value">0</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Accuracy</span>
+            <span id="accuracy" class="stat-value">100%</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Time</span>
+            <span id="time" class="stat-value">30s</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="panel">
+        <div class="options">
+          <div class="toggle-group" role="group" aria-label="Test length">
+            <button class="chip active" data-time="15" type="button">15s</button>
+            <button class="chip" data-time="30" type="button">30s</button>
+            <button class="chip" data-time="60" type="button">60s</button>
+          </div>
+          <button id="resetBtn" class="chip ghost" type="button">Reset</button>
+        </div>
+
+        <div id="test" class="test" aria-live="polite"></div>
+        <input id="input" class="hidden-input" type="text" autocomplete="off" spellcheck="false" aria-label="Typing input" />
+      </section>
+
+      <section class="summary" aria-label="Session summary">
+        <div>
+          <h2>Session</h2>
+          <p id="sessionLine">Start typing to see your stats.</p>
+        </div>
+        <button id="nextBtn" class="btn" type="button">New Text</button>
+      </section>
+
+      <section id="leaderboard" class="leaderboard" aria-label="Leaderboard">
+        <div class="leaderboard-header">
+          <h2>Leaderboard</h2>
+          <p>Top scores (best per user)</p>
+        </div>
+        <ol id="leaderboardList" class="leaderboard-list"></ol>
+      </section>
+    </main>
+
+    <div id="resultOverlay" class="overlay" aria-hidden="true">
+      <div class="overlay-card" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+        <h2 id="resultTitle">Session Complete</h2>
+        <p id="resultWpm" class="result-stat">WPM: 0</p>
+        <p id="resultAccuracy" class="result-stat">Accuracy: 100%</p>
+        <p id="resultWords" class="result-stat">Words: 0</p>
+        <p id="resultChars" class="result-stat">Characters: 0</p>
+        <div class="chart-wrap">
+          <canvas id="resultChart" width="360" height="160" aria-label="WPM chart"></canvas>
+        </div>
+        <div class="overlay-actions">
+          <button id="retryBtn" class="btn" type="button">Try Again</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

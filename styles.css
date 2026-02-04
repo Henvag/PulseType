@@ -1,0 +1,411 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap");
+
+:root {
+  --ink: #0b0b0b;
+  --sand: #f7f2e9;
+  --glow: #ffb347;
+  --mint: #7cf4c5;
+  --rose: #ff6b6b;
+  --sky: #7bdff6;
+  --panel: rgba(255, 255, 255, 0.7);
+  --shadow: rgba(0, 0, 0, 0.16);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: #f6f4f1;
+  color: var(--ink);
+  font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.app {
+  width: min(1100px, 92vw);
+  padding: 48px 0 40px;
+  display: grid;
+  gap: 28px;
+  min-height: 100vh;
+  align-content: center;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.auth {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  position: relative;
+}
+
+.icon-btn {
+  border: none;
+  background: #ffffff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.icon-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: #0b0b0b;
+}
+
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  padding: 8px 12px;
+  border-radius: 999px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  position: absolute;
+  top: 56px;
+  right: 0;
+  z-index: 5;
+}
+
+.user-badge img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.login-menu {
+  position: absolute;
+  top: 56px;
+  right: 0;
+  display: grid;
+  gap: 8px;
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 16px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+  z-index: 5;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 0.7rem;
+}
+
+.hero h1 {
+  font-size: clamp(2.6rem, 6vw, 3.8rem);
+}
+
+.stats {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  background: #ffffff;
+  padding: 14px 18px;
+  border-radius: 18px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  min-width: 120px;
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.65rem;
+  opacity: 0.65;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.panel {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 28px 32px 32px;
+  box-shadow: 0 18px 32px rgba(0, 0, 0, 0.08);
+  display: grid;
+  gap: 22px;
+  justify-items: center;
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.toggle-group {
+  display: inline-flex;
+  gap: 10px;
+}
+
+.chip {
+  border: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.chip.active {
+  background: var(--ink);
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+
+.chip.ghost {
+  background: transparent;
+  border: 2px solid var(--ink);
+}
+
+.test {
+  font-family: "IBM Plex Mono", "Courier New", monospace;
+  font-size: 1.4rem;
+  line-height: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 760px;
+  justify-content: center;
+}
+
+.word {
+  padding: 4px 6px;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.word.active {
+  background: #f2f2f2;
+  box-shadow: inset 0 0 0 2px #d6d6d6;
+}
+
+.word.pending {
+  opacity: 0.55;
+}
+
+.word.correct {
+  color: #1a7f5f;
+}
+
+.word.incorrect {
+  color: #a62424;
+}
+
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.4em;
+  background: #0b0b0b;
+  margin-right: 2px;
+  animation: blink 1s steps(1, end) infinite;
+  transform: translateY(2px);
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.letter.correct {
+  color: #1a7f5f;
+}
+
+.letter.incorrect {
+  color: #a62424;
+  text-decoration: underline;
+}
+
+.letter.extra {
+  color: var(--rose);
+}
+
+.hidden-input {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  border: 0;
+  padding: 0;
+}
+
+.summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 18px 24px;
+  background: #ffffff;
+  border-radius: 22px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.summary h2 {
+  font-size: 1.4rem;
+  margin-bottom: 4px;
+}
+
+.btn {
+  background: var(--ink);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.footer {
+  text-align: center;
+  padding: 18px 0 8px;
+  opacity: 0.7;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 11, 11, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  padding: 24px;
+}
+
+.overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.overlay-card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 28px 32px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+  width: min(520px, 92vw);
+  text-align: center;
+  display: grid;
+  gap: 10px;
+}
+
+.result-stat {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.overlay-actions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.chart-wrap {
+  margin-top: 8px;
+  padding: 12px 16px;
+  background: #f6f4f1;
+  border-radius: 18px;
+}
+
+#resultChart {
+  width: 100%;
+  height: 180px;
+  display: block;
+}
+
+.leaderboard {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 20px 24px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  display: grid;
+  gap: 12px;
+}
+
+.leaderboard-header h2 {
+  font-size: 1.4rem;
+  margin-bottom: 4px;
+}
+
+.leaderboard-list {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f6f4f1;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 0.95rem;
+}
+
+.leaderboard-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.leaderboard-left img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.leaderboard-score {
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .panel {
+    padding: 22px;
+  }
+
+  .test {
+    font-size: 1.15rem;
+  }
+}
