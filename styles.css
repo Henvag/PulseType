@@ -404,6 +404,7 @@ kbd {
   min-height: 70vh;
   display: grid;
   gap: 20px;
+  overflow: visible;
 }
 
 .profile-header {

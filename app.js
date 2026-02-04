@@ -157,6 +157,7 @@ let restartArmed = false;
 let restartTimer = null;
 
 const KEYBOARD_CUSTOM_VALUE = "Unlisted / Custom";
+const KEYBOARD_BRANDS = ["Keychron", "Razer", "Logitech", "Corsair", "Ducky", "HHKB"];
 
 function shuffleArray(list) {
   const copy = [...list];
@@ -491,8 +492,18 @@ async function loadProfile() {
     });
   }
 
-  keyboardSelect.value = currentUser.keyboardModel || "";
-  keyboardCustomWrap.classList.add("hidden");
+  const model = currentUser.keyboardModel || "";
+  if (KEYBOARD_BRANDS.includes(model)) {
+    keyboardSelect.value = model;
+    keyboardCustomWrap.classList.add("hidden");
+  } else if (model) {
+    keyboardSelect.value = KEYBOARD_CUSTOM_VALUE;
+    keyboardCustomInput.value = model;
+    keyboardCustomWrap.classList.remove("hidden");
+  } else {
+    keyboardSelect.value = "";
+    keyboardCustomWrap.classList.add("hidden");
+  }
 }
 
 async function saveKeyboard(label) {
@@ -710,12 +721,6 @@ resultOverlay.addEventListener("click", (event) => {
   if (event.target === resultOverlay) {
     resetTest();
     inputEl.focus();
-  }
-});
-
-profileOverlay.addEventListener("click", (event) => {
-  if (event.target === profileOverlay) {
-    closeProfile();
   }
 });
 
