@@ -223,7 +223,7 @@ function setTime(seconds) {
   timeEl.textContent = `${seconds}s`;
 }
 
-function resetTest({ animate } = {}) {
+function resetTest() {
   buildWords();
   currentIndex = 0;
   totalTyped = 0;
@@ -242,13 +242,7 @@ function resetTest({ animate } = {}) {
   resultOverlay.classList.remove("show");
   resultOverlay.setAttribute("aria-hidden", "true");
   renderWords();
-  if (animate) {
-    testEl.classList.remove("fade");
-    void testEl.offsetWidth;
-    testEl.classList.add("fade");
-  } else {
-    testEl.classList.remove("fade");
-  }
+  testEl.classList.remove("fade");
 }
 
 function updateStats() {
@@ -669,7 +663,7 @@ function attemptRestart(key) {
   }
   if (key === "Enter" && restartArmed) {
     restartArmed = false;
-    resetTest({ animate: true });
+    resetTest();
     inputEl.focus();
     return true;
   }
@@ -736,12 +730,12 @@ document.addEventListener("click", (event) => {
 });
 
 resetBtn.addEventListener("click", () => {
-  resetTest({ animate: true });
+  resetTest();
   inputEl.focus();
 });
 
 logo.addEventListener("click", () => {
-  resetTest({ animate: true });
+  resetTest();
   inputEl.focus();
 });
 
@@ -859,7 +853,7 @@ timeButtons.forEach((button) => {
     timeButtons.forEach((btn) => btn.classList.remove("active"));
     button.classList.add("active");
     setTime(Number(button.dataset.time));
-    resetTest({ animate: true });
+    resetTest();
     inputEl.focus();
   });
 });
