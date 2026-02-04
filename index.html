@@ -220,13 +220,32 @@
     </div>
 
     <footer class="site-footer">
-      <a class="footer-link" href="https://github.com/Henvag/PulseType" target="_blank" rel="noreferrer">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 2.2a9.9 9.9 0 0 0-3.13 19.3c.5.09.68-.22.68-.48v-1.7c-2.77.62-3.36-1.19-3.36-1.19-.45-1.17-1.1-1.48-1.1-1.48-.9-.64.07-.63.07-.63 1 .07 1.53 1.05 1.53 1.05.9 1.57 2.36 1.12 2.94.86.09-.67.36-1.12.65-1.38-2.22-.26-4.56-1.14-4.56-5.08 0-1.12.39-2.04 1.03-2.76-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05a9.2 9.2 0 0 1 5 0c1.9-1.32 2.74-1.05 2.74-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.64 1.03 2.76 0 3.95-2.35 4.81-4.58 5.07.37.33.7.97.7 1.96v2.9c0 .26.18.57.69.48A9.9 9.9 0 0 0 12 2.2Z"></path>
-        </svg>
-        <span>GitHub</span>
-      </a>
+      <div class="footer-actions">
+        <a class="footer-link" href="https://github.com/Henvag/PulseType" target="_blank" rel="noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2.2a9.9 9.9 0 0 0-3.13 19.3c.5.09.68-.22.68-.48v-1.7c-2.77.62-3.36-1.19-3.36-1.19-.45-1.17-1.1-1.48-1.1-1.48-.9-.64.07-.63.07-.63 1 .07 1.53 1.05 1.53 1.05.9 1.57 2.36 1.12 2.94.86.09-.67.36-1.12.65-1.38-2.22-.26-4.56-1.14-4.56-5.08 0-1.12.39-2.04 1.03-2.76-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05a9.2 9.2 0 0 1 5 0c1.9-1.32 2.74-1.05 2.74-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.64 1.03 2.76 0 3.95-2.35 4.81-4.58 5.07.37.33.7.97.7 1.96v2.9c0 .26.18.57.69.48A9.9 9.9 0 0 0 12 2.2Z"></path>
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <button id="themeBtn" class="footer-link ghost-link" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9Zm0 2a7 7 0 0 1 6.32 10H12V5Z"></path>
+          </svg>
+          <span>Theme</span>
+        </button>
+      </div>
     </footer>
+
+    <div id="themeOverlay" class="overlay theme-overlay" aria-hidden="true">
+      <div class="theme-card" role="dialog" aria-modal="true" aria-labelledby="themeTitle">
+        <div class="theme-header">
+          <h2 id="themeTitle">Themes</h2>
+          <button id="closeThemeBtn" class="chip ghost" type="button">Close</button>
+        </div>
+        <input id="themeSearch" class="theme-search" type="text" placeholder="Search theme..." />
+        <div id="themeList" class="theme-list"></div>
+      </div>
+    </div>
 
     <script src="app.js"></script>
   </body>

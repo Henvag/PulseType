@@ -27,6 +27,11 @@ const publicName = document.getElementById("publicName");
 const publicKeyboard = document.getElementById("publicKeyboard");
 const publicBest = document.getElementById("publicBest");
 const closePublicProfileBtn = document.getElementById("closePublicProfileBtn");
+const themeBtn = document.getElementById("themeBtn");
+const themeOverlay = document.getElementById("themeOverlay");
+const closeThemeBtn = document.getElementById("closeThemeBtn");
+const themeList = document.getElementById("themeList");
+const themeSearch = document.getElementById("themeSearch");
 const profileOverlay = document.getElementById("profileOverlay");
 const profileAvatar = document.getElementById("profileAvatar");
 const profileName = document.getElementById("profileName");
@@ -162,6 +167,46 @@ let lastSampleSecond = -1;
 let currentUser = null;
 let restartArmed = false;
 let restartTimer = null;
+
+const THEMES = [
+  { name: "Monochrome", bg: "#f6f4f1", surface: "#ffffff", surface2: "#f6f4f1", text: "#0b0b0b", accent: "#0b0b0b" },
+  { name: "Nord Light", bg: "#eceff4", surface: "#ffffff", surface2: "#e5e9f0", text: "#2e3440", accent: "#5e81ac" },
+  { name: "Solarized Light", bg: "#fdf6e3", surface: "#fffdf5", surface2: "#f5ecd7", text: "#586e75", accent: "#268bd2" },
+  { name: "Serika", bg: "#f4ead4", surface: "#fffaf0", surface2: "#efe0c0", text: "#2f2a24", accent: "#d68f00" },
+  { name: "Tangerine", bg: "#fff3e6", surface: "#ffffff", surface2: "#ffe6cc", text: "#3b2b1f", accent: "#ff7a00" },
+  { name: "Obsidian", bg: "#0f1115", surface: "#141821", surface2: "#1c2230", text: "#f5f7ff", accent: "#7aa2f7" },
+  { name: "Rose", bg: "#fff0f3", surface: "#ffffff", surface2: "#ffe2e8", text: "#3c1f28", accent: "#e11d48" },
+];
+
+function applyTheme(theme) {
+  const root = document.documentElement;
+  root.style.setProperty("--bg", theme.bg);
+  root.style.setProperty("--surface", theme.surface);
+  root.style.setProperty("--surface-2", theme.surface2);
+  root.style.setProperty("--text", theme.text);
+  root.style.setProperty("--accent", theme.accent);
+  root.style.setProperty("--accent-contrast", "#ffffff");
+  localStorage.setItem("pulsetype-theme", theme.name);
+}
+
+function renderThemeList(filter = "") {
+  themeList.innerHTML = "";
+  THEMES.filter((t) => t.name.toLowerCase().includes(filter.toLowerCase())).forEach((theme) => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "theme-item";
+    item.innerHTML = `
+      <span>${theme.name}</span>
+      <span class="theme-swatch">
+        <span class="theme-dot" style="background:${theme.text}"></span>
+        <span class="theme-dot" style="background:${theme.accent}"></span>
+        <span class="theme-dot" style="background:${theme.surface2}"></span>
+      </span>
+    `;
+    item.addEventListener("click", () => applyTheme(theme));
+    themeList.appendChild(item);
+  });
+}
 
 const KEYBOARD_CUSTOM_VALUE = "Unlisted / Custom";
 const KEYBOARD_BRANDS = ["Keychron", "Razer", "Logitech", "Corsair", "Ducky", "HHKB"];
@@ -816,6 +861,30 @@ publicProfileOverlay.addEventListener("click", (event) => {
   }
 });
 
+themeBtn.addEventListener("click", () => {
+  themeOverlay.classList.add("show");
+  themeOverlay.setAttribute("aria-hidden", "false");
+  renderThemeList();
+  themeSearch.value = "";
+  themeSearch.focus();
+});
+
+closeThemeBtn.addEventListener("click", () => {
+  themeOverlay.classList.remove("show");
+  themeOverlay.setAttribute("aria-hidden", "true");
+});
+
+themeOverlay.addEventListener("click", (event) => {
+  if (event.target === themeOverlay) {
+    themeOverlay.classList.remove("show");
+    themeOverlay.setAttribute("aria-hidden", "true");
+  }
+});
+
+themeSearch.addEventListener("input", (event) => {
+  renderThemeList(event.target.value);
+});
+
 keyboardSelect.addEventListener("change", () => {
   if (!currentUser) return;
   const value = keyboardSelect.value;
@@ -888,3 +957,8 @@ buildWords();
 renderWords();
 inputEl.focus();
 loadMe();
+const savedTheme = localStorage.getItem("pulsetype-theme");
+if (savedTheme) {
+  const theme = THEMES.find((t) => t.name === savedTheme);
+  if (theme) applyTheme(theme);
+}
