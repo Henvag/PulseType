@@ -454,8 +454,8 @@ function drawChart() {
   ctx.fillStyle = "#f6f4f1";
   ctx.fillRect(0, 0, width, height);
 
-  const padding = 16;
-  const labelSpace = 28;
+  const padding = 20;
+  const labelSpace = 38;
   const innerWidth = width - padding * 2 - labelSpace;
   const innerHeight = height - padding * 2 - labelSpace;
   const definedHistory = wpmHistory.filter((value) => value != null);
@@ -464,8 +464,8 @@ function drawChart() {
   const originX = padding + labelSpace;
   const originY = height - padding - labelSpace;
 
-  ctx.fillStyle = "#0b0b0b";
-  ctx.font = `${12 * pixelRatio}px "Space Grotesk", sans-serif`;
+  ctx.fillStyle = "#2f2a24";
+  ctx.font = `${11 * pixelRatio}px "Space Grotesk", sans-serif`;
   ctx.textAlign = "center";
   ctx.fillText("Time (s)", originX + innerWidth / 2, height - padding);
 
@@ -476,7 +476,7 @@ function drawChart() {
   ctx.fillText("WPM", 0, 0);
   ctx.restore();
 
-  ctx.strokeStyle = "#d6d6d6";
+  ctx.strokeStyle = "rgba(0, 0, 0, 0.08)";
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(originX, originY);
@@ -486,12 +486,12 @@ function drawChart() {
   ctx.stroke();
 
   const yTickCount = 5;
-  ctx.fillStyle = "#8a7f73";
+  ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
   ctx.textAlign = "right";
   for (let i = 0; i <= yTickCount; i += 1) {
     const tick = Math.round((maxWpm * i) / yTickCount);
     const y = originY - (innerHeight * tick) / maxWpm;
-    ctx.fillText(`${tick}`, originX - 6, y + 4);
+    ctx.fillText(`${tick}`, originX - 8, y + 4);
     ctx.strokeStyle = "rgba(0, 0, 0, 0.06)";
     ctx.beginPath();
     ctx.moveTo(originX, y);
@@ -500,10 +500,11 @@ function drawChart() {
   }
 
   ctx.textAlign = "center";
-  ctx.fillStyle = "#8a7f73";
-  for (let tick = 0; tick <= timeLimit; tick += 1) {
+  ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+  const xTickStep = timeLimit <= 15 ? 1 : timeLimit <= 30 ? 2 : 5;
+  for (let tick = 0; tick <= timeLimit; tick += xTickStep) {
     const x = originX + (innerWidth * tick) / timeLimit;
-    ctx.fillText(`${tick}`, x, originY + 16);
+    ctx.fillText(`${tick}`, x, originY + 18);
     if (tick !== 0 && tick !== timeLimit) {
       ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
       ctx.beginPath();
@@ -516,7 +517,7 @@ function drawChart() {
   if (definedHistory.length < 2) return;
 
   ctx.strokeStyle = "#0b0b0b";
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 2.5 * pixelRatio;
   ctx.beginPath();
   let started = false;
   wpmHistory.forEach((wpm, second) => {
@@ -531,6 +532,16 @@ function drawChart() {
     }
   });
   ctx.stroke();
+
+  ctx.fillStyle = "#0b0b0b";
+  wpmHistory.forEach((wpm, second) => {
+    if (wpm == null) return;
+    const x = originX + (innerWidth * second) / timeLimit;
+    const y = originY - (innerHeight * wpm) / maxWpm;
+    ctx.beginPath();
+    ctx.arc(x, y, 2 * pixelRatio, 0, Math.PI * 2);
+    ctx.fill();
+  });
 }
 
 async function loadMe() {
