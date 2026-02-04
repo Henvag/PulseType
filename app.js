@@ -27,9 +27,9 @@ const publicName = document.getElementById("publicName");
 const publicKeyboard = document.getElementById("publicKeyboard");
 const publicJoin = document.getElementById("publicJoin");
 const publicLevel = document.getElementById("publicLevel");
-const publicTitles = document.getElementById("publicTitles");
 const publicXpFill = document.getElementById("publicXpFill");
 const publicXpText = document.getElementById("publicXpText");
+const publicTitleLine = document.getElementById("publicTitleLine");
 const publicBest = document.getElementById("publicBest");
 const closePublicProfileBtn = document.getElementById("closePublicProfileBtn");
 const themeBtn = document.getElementById("themeBtn");
@@ -43,9 +43,10 @@ const profileName = document.getElementById("profileName");
 const profileProvider = document.getElementById("profileProvider");
 const profileJoin = document.getElementById("profileJoin");
 const profileLevel = document.getElementById("profileLevel");
-const profileTitles = document.getElementById("profileTitles");
 const profileXpFill = document.getElementById("profileXpFill");
 const profileXpText = document.getElementById("profileXpText");
+const profileTitleLine = document.getElementById("profileTitleLine");
+const titleSelect = document.getElementById("titleSelect");
 const profileBest = document.getElementById("profileBest");
 const profileRecent = document.getElementById("profileRecent");
 const closeProfileBtn = document.getElementById("closeProfileBtn");
@@ -608,6 +609,9 @@ async function loadLeaderboard(duration = 15) {
     }
     const label = document.createElement("span");
     label.textContent = entry.display_name;
+    if (entry.selected_title) {
+      label.textContent = `${entry.display_name} · ${entry.selected_title}`;
+    }
     name.appendChild(label);
     name.addEventListener("click", () => openPublicProfile(entry.user_id));
 
@@ -650,6 +654,9 @@ async function loadProfile() {
     profileJoin.textContent = "";
   }
   profileLevel.textContent = `Level ${currentUser.level || 1} · ${currentUser.totalXp || 0} XP`;
+  profileTitleLine.textContent = currentUser.selectedTitle
+    ? `Title: ${currentUser.selectedTitle}`
+    : "Title: None";
   const currentLevel = currentUser.level || 1;
   const totalXp = currentUser.totalXp || 0;
   const startXp = levelStartXp(currentLevel);
@@ -692,17 +699,19 @@ async function loadProfile() {
     });
   }
 
-  profileTitles.innerHTML = "";
   const titles = currentUser.unlockedTitles || [];
-  if (!titles.length) {
-    profileTitles.innerHTML = "<li>No titles yet.</li>";
-  } else {
-    titles.forEach((title) => {
-      const item = document.createElement("li");
-      item.textContent = title;
-      profileTitles.appendChild(item);
-    });
-  }
+  titleSelect.innerHTML = "";
+  const noneOption = document.createElement("option");
+  noneOption.value = "";
+  noneOption.textContent = "No title";
+  titleSelect.appendChild(noneOption);
+  titles.forEach((title) => {
+    const option = document.createElement("option");
+    option.value = title;
+    option.textContent = title;
+    titleSelect.appendChild(option);
+  });
+  titleSelect.value = currentUser.selectedTitle || "";
 
   const model = currentUser.keyboardModel || "";
   if (KEYBOARD_BRANDS.includes(model)) {
@@ -779,6 +788,9 @@ async function openPublicProfile(userId) {
     publicJoin.textContent = "";
   }
   publicLevel.textContent = `Level ${data.user.level || 1} · ${data.user.totalXp || 0} XP`;
+  publicTitleLine.textContent = data.user.selectedTitle
+    ? `Title: ${data.user.selectedTitle}`
+    : "Title: None";
   const publicLevelValue = data.user.level || 1;
   const publicTotalXp = data.user.totalXp || 0;
   const publicStart = levelStartXp(publicLevelValue);
@@ -805,17 +817,6 @@ async function openPublicProfile(userId) {
     });
   }
 
-  publicTitles.innerHTML = "";
-  const titles = data.user.unlockedTitles || [];
-  if (!titles.length) {
-    publicTitles.innerHTML = "<li>No titles yet.</li>";
-  } else {
-    titles.forEach((title) => {
-      const item = document.createElement("li");
-      item.textContent = title;
-      publicTitles.appendChild(item);
-    });
-  }
   openPublicProfileOverlay();
 }
 
@@ -1077,6 +1078,20 @@ keyboardCustomSave.addEventListener("click", () => {
   saveKeyboard(value);
   keyboardCustomWrap.classList.add("hidden");
   keyboardSelect.value = value;
+});
+
+titleSelect.addEventListener("change", async () => {
+  if (!currentUser) return;
+  const title = titleSelect.value;
+  const res = await fetch("/api/me/title", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title }),
+  });
+  if (!res.ok) return;
+  const data = await res.json();
+  currentUser.selectedTitle = data.selectedTitle;
+  profileTitleLine.textContent = data.selectedTitle ? `Title: ${data.selectedTitle}` : "Title: None";
 });
 
 closeLeaderboardBtn.addEventListener("click", () => {

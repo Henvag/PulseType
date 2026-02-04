@@ -177,6 +177,7 @@ app.get("/api/me", (req, res) => {
     total_xp: totalXp,
     level,
     unlocked_titles: unlockedTitles,
+    selected_title: selectedTitle,
   } = req.user;
   return res.json({
     user: {
@@ -189,6 +190,7 @@ app.get("/api/me", (req, res) => {
       totalXp: totalXp || 0,
       level: level || 1,
       unlockedTitles: unlockedTitles || [],
+      selectedTitle: selectedTitle || "",
     },
   });
 });
@@ -198,7 +200,7 @@ app.get("/api/leaderboard", async (req, res) => {
   const { rows } = await pool.query(
     `SELECT DISTINCT ON (s.user_id)
             s.id, s.user_id, s.wpm, s.accuracy, s.chars_typed, s.duration_seconds, s.created_at,
-            u.display_name, u.avatar_url
+            u.display_name, u.avatar_url, u.selected_title
      FROM scores s
      JOIN users u ON s.user_id = u.id
      WHERE s.duration_seconds = $1
@@ -238,7 +240,7 @@ app.get("/api/users/:id", async (req, res) => {
     return res.status(400).json({ error: "Invalid user" });
   }
   const { rows } = await pool.query(
-    "SELECT id, display_name, avatar_url, keyboard_model, created_at, total_xp, level, unlocked_titles FROM users WHERE id = $1",
+    "SELECT id, display_name, avatar_url, keyboard_model, created_at, total_xp, level, unlocked_titles, selected_title FROM users WHERE id = $1",
     [userId]
   );
   const user = rows[0];
@@ -262,6 +264,7 @@ app.get("/api/users/:id", async (req, res) => {
       totalXp: user.total_xp || 0,
       level: user.level || 1,
       unlockedTitles: user.unlocked_titles || [],
+      selectedTitle: user.selected_title || "",
     },
     best: bestRows,
   });
@@ -278,6 +281,27 @@ app.put("/api/me/keyboard", ensureAuth, async (req, res) => {
     [value, req.user.id]
   );
   res.json({ keyboardModel: rows[0]?.keyboard_model || null });
+});
+
+app.put("/api/me/title", ensureAuth, async (req, res) => {
+  const { title } = req.body || {};
+  if (title != null && typeof title !== "string") {
+    return res.status(400).json({ error: "Invalid title" });
+  }
+  const value = title?.trim() || "";
+  const { rows } = await pool.query(
+    "SELECT unlocked_titles FROM users WHERE id = $1",
+    [req.user.id]
+  );
+  const unlocked = rows[0]?.unlocked_titles || [];
+  if (value && !unlocked.includes(value)) {
+    return res.status(400).json({ error: "Title not unlocked" });
+  }
+  const { rows: updated } = await pool.query(
+    "UPDATE users SET selected_title = $1 WHERE id = $2 RETURNING selected_title",
+    [value || null, req.user.id]
+  );
+  res.json({ selectedTitle: updated[0]?.selected_title || "" });
 });
 
 app.post("/api/score", ensureAuth, async (req, res) => {

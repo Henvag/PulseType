@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
   total_xp INTEGER DEFAULT 0,
   level INTEGER DEFAULT 1,
   unlocked_titles TEXT[] DEFAULT '{}'::text[],
+  selected_title TEXT,
   created_at TIMESTAMP DEFAULT NOW(),
   UNIQUE(provider, provider_id)
 );
@@ -16,6 +17,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS keyboard_model TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS total_xp INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS level INTEGER DEFAULT 1;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS unlocked_titles TEXT[] DEFAULT '{}'::text[];
+ALTER TABLE users ADD COLUMN IF NOT EXISTS selected_title TEXT;
 
 CREATE TABLE IF NOT EXISTS scores (
   id SERIAL PRIMARY KEY,

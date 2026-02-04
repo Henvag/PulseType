@@ -479,6 +479,19 @@ kbd {
   justify-content: flex-end;
 }
 
+.profile-titles {
+  display: grid;
+  gap: 8px;
+}
+
+.profile-titles select {
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  background: var(--surface);
+  color: var(--text);
+}
 .logout-btn {
   background: #b3261e;
   color: var(--accent-contrast);
