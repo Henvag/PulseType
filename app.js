@@ -667,8 +667,9 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-document.addEventListener("click", () => {
+document.addEventListener("click", (event) => {
   if (isFinished) return;
+  if (event.target.closest(".overlay")) return;
   inputEl.focus();
 });
 
