@@ -526,7 +526,9 @@ async function saveKeyboard(label) {
       body: JSON.stringify({ keyboardModel: label }),
       signal: controller.signal,
     });
-    if (!res.ok) throw new Error("Save failed");
+    if (!res.ok) {
+      throw new Error(`Save failed (${res.status})`);
+    }
     const data = await res.json();
     currentUser.keyboardModel = data.keyboardModel;
     keyboardStatus.textContent = data.keyboardModel
