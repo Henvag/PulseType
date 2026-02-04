@@ -169,13 +169,69 @@ let restartArmed = false;
 let restartTimer = null;
 
 const THEMES = [
-  { name: "Monochrome", bg: "#f6f4f1", surface: "#ffffff", surface2: "#f6f4f1", text: "#0b0b0b", accent: "#0b0b0b" },
-  { name: "Nord Light", bg: "#eceff4", surface: "#ffffff", surface2: "#e5e9f0", text: "#2e3440", accent: "#5e81ac" },
-  { name: "Solarized Light", bg: "#fdf6e3", surface: "#fffdf5", surface2: "#f5ecd7", text: "#586e75", accent: "#268bd2" },
-  { name: "Serika", bg: "#f4ead4", surface: "#fffaf0", surface2: "#efe0c0", text: "#2f2a24", accent: "#d68f00" },
-  { name: "Tangerine", bg: "#fff3e6", surface: "#ffffff", surface2: "#ffe6cc", text: "#3b2b1f", accent: "#ff7a00" },
-  { name: "Obsidian", bg: "#0f1115", surface: "#141821", surface2: "#1c2230", text: "#f5f7ff", accent: "#7aa2f7" },
-  { name: "Rose", bg: "#fff0f3", surface: "#ffffff", surface2: "#ffe2e8", text: "#3c1f28", accent: "#e11d48" },
+  {
+    name: "PulseType",
+    bg: "#f6f4f1",
+    surface: "#ffffff",
+    surface2: "#f6f4f1",
+    text: "#0b0b0b",
+    accent: "#0b0b0b",
+    accentContrast: "#ffffff",
+  },
+  {
+    name: "Nord Light",
+    bg: "#eceff4",
+    surface: "#ffffff",
+    surface2: "#e5e9f0",
+    text: "#2e3440",
+    accent: "#5e81ac",
+    accentContrast: "#ffffff",
+  },
+  {
+    name: "Solarized Light",
+    bg: "#fdf6e3",
+    surface: "#fffdf5",
+    surface2: "#f3ead0",
+    text: "#586e75",
+    accent: "#268bd2",
+    accentContrast: "#ffffff",
+  },
+  {
+    name: "Serika",
+    bg: "#f4ead4",
+    surface: "#fffaf0",
+    surface2: "#efe0c0",
+    text: "#2f2a24",
+    accent: "#d68f00",
+    accentContrast: "#ffffff",
+  },
+  {
+    name: "Tangerine",
+    bg: "#fff2e1",
+    surface: "#ffffff",
+    surface2: "#ffe0c2",
+    text: "#3b2b1f",
+    accent: "#ff7a00",
+    accentContrast: "#ffffff",
+  },
+  {
+    name: "Obsidian",
+    bg: "#0f1115",
+    surface: "#141821",
+    surface2: "#1c2230",
+    text: "#f5f7ff",
+    accent: "#7aa2f7",
+    accentContrast: "#0b0b0b",
+  },
+  {
+    name: "Rose",
+    bg: "#fff0f3",
+    surface: "#ffffff",
+    surface2: "#ffe2e8",
+    text: "#3c1f28",
+    accent: "#e11d48",
+    accentContrast: "#ffffff",
+  },
 ];
 
 function applyTheme(theme) {
@@ -185,13 +241,21 @@ function applyTheme(theme) {
   root.style.setProperty("--surface-2", theme.surface2);
   root.style.setProperty("--text", theme.text);
   root.style.setProperty("--accent", theme.accent);
-  root.style.setProperty("--accent-contrast", "#ffffff");
+  root.style.setProperty("--accent-contrast", theme.accentContrast || "#ffffff");
   localStorage.setItem("pulsetype-theme", theme.name);
 }
 
 function renderThemeList(filter = "") {
   themeList.innerHTML = "";
-  THEMES.filter((t) => t.name.toLowerCase().includes(filter.toLowerCase())).forEach((theme) => {
+  const filtered = THEMES.filter((t) => t.name.toLowerCase().includes(filter.toLowerCase()));
+  if (!filtered.length) {
+    const empty = document.createElement("div");
+    empty.className = "theme-item";
+    empty.textContent = "No matching themes";
+    themeList.appendChild(empty);
+    return;
+  }
+  filtered.forEach((theme) => {
     const item = document.createElement("button");
     item.type = "button";
     item.className = "theme-item";
@@ -885,6 +949,10 @@ themeSearch.addEventListener("input", (event) => {
   renderThemeList(event.target.value);
 });
 
+themeSearch.addEventListener("keyup", (event) => {
+  renderThemeList(event.target.value);
+});
+
 keyboardSelect.addEventListener("change", () => {
   if (!currentUser) return;
   const value = keyboardSelect.value;
@@ -961,4 +1029,6 @@ const savedTheme = localStorage.getItem("pulsetype-theme");
 if (savedTheme) {
   const theme = THEMES.find((t) => t.name === savedTheme);
   if (theme) applyTheme(theme);
+} else {
+  applyTheme(THEMES[0]);
 }
