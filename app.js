@@ -222,6 +222,7 @@ const THEMES = [
     text: "#f5f7ff",
     accent: "#7aa2f7",
     accentContrast: "#0b0b0b",
+    muted: "rgba(245, 247, 255, 0.6)",
   },
   {
     name: "Rose",
@@ -242,6 +243,7 @@ function applyTheme(theme) {
   root.style.setProperty("--text", theme.text);
   root.style.setProperty("--accent", theme.accent);
   root.style.setProperty("--accent-contrast", theme.accentContrast || "#ffffff");
+  root.style.setProperty("--muted", theme.muted || "rgba(0, 0, 0, 0.6)");
   localStorage.setItem("pulsetype-theme", theme.name);
 }
 
