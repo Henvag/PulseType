@@ -28,6 +28,8 @@ const profileProvider = document.getElementById("profileProvider");
 const profileBest = document.getElementById("profileBest");
 const profileRecent = document.getElementById("profileRecent");
 const closeProfileBtn = document.getElementById("closeProfileBtn");
+const keyboardSelect = document.getElementById("keyboardSelect");
+const keyboardStatus = document.getElementById("keyboardStatus");
 const loginOverlay = document.getElementById("loginOverlay");
 const closeLoginBtn = document.getElementById("closeLoginBtn");
 
@@ -443,6 +445,10 @@ async function loadProfile() {
   if (!currentUser) return;
   profileName.textContent = currentUser.displayName;
   profileProvider.textContent = `Signed in with ${currentUser.provider}`;
+  keyboardSelect.value = currentUser.keyboardModel || "";
+  keyboardStatus.textContent = currentUser.keyboardModel
+    ? `Using ${currentUser.keyboardModel}`
+    : "Choose your keyboard to display it on your profile.";
   if (currentUser.avatarUrl) {
     profileAvatar.src = currentUser.avatarUrl;
     profileAvatar.classList.remove("hidden");
@@ -682,6 +688,22 @@ profileOverlay.addEventListener("click", (event) => {
 });
 
 closeProfileBtn.addEventListener("click", closeProfile);
+
+keyboardSelect.addEventListener("change", async () => {
+  if (!currentUser) return;
+  const keyboardModel = keyboardSelect.value;
+  keyboardStatus.textContent = "Saving...";
+  const res = await fetch("/api/me/keyboard", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ keyboardModel }),
+  });
+  const data = await res.json();
+  currentUser.keyboardModel = data.keyboardModel;
+  keyboardStatus.textContent = data.keyboardModel
+    ? `Using ${data.keyboardModel}`
+    : "Choose your keyboard to display it on your profile.";
+});
 
 closeLeaderboardBtn.addEventListener("click", () => {
   leaderboardOverlay.classList.remove("show");

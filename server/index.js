@@ -148,8 +148,14 @@ app.post("/auth/logout", (req, res) => {
 
 app.get("/api/me", (req, res) => {
   if (!req.user) return res.json({ user: null });
-  const { id, display_name: displayName, avatar_url: avatarUrl, provider } = req.user;
-  return res.json({ user: { id, displayName, avatarUrl, provider } });
+  const {
+    id,
+    display_name: displayName,
+    avatar_url: avatarUrl,
+    provider,
+    keyboard_model: keyboardModel,
+  } = req.user;
+  return res.json({ user: { id, displayName, avatarUrl, provider, keyboardModel } });
 });
 
 app.get("/api/leaderboard", async (req, res) => {
@@ -186,6 +192,19 @@ app.get("/api/me/scores", ensureAuth, async (req, res) => {
   );
 
   res.json({ best: bestRows, recent: recentRows });
+});
+
+app.put("/api/me/keyboard", ensureAuth, async (req, res) => {
+  const { keyboardModel } = req.body || {};
+  if (keyboardModel != null && typeof keyboardModel !== "string") {
+    return res.status(400).json({ error: "Invalid keyboard" });
+  }
+  const value = keyboardModel?.trim() || null;
+  const { rows } = await pool.query(
+    "UPDATE users SET keyboard_model = $1 WHERE id = $2 RETURNING keyboard_model",
+    [value, req.user.id]
+  );
+  res.json({ keyboardModel: rows[0]?.keyboard_model || null });
 });
 
 app.post("/api/score", ensureAuth, async (req, res) => {

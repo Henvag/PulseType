@@ -4,9 +4,12 @@ CREATE TABLE IF NOT EXISTS users (
   provider_id TEXT NOT NULL,
   display_name TEXT NOT NULL,
   avatar_url TEXT,
+  keyboard_model TEXT,
   created_at TIMESTAMP DEFAULT NOW(),
   UNIQUE(provider, provider_id)
 );
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS keyboard_model TEXT;
 
 CREATE TABLE IF NOT EXISTS scores (
   id SERIAL PRIMARY KEY,
