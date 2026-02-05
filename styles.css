@@ -393,6 +393,26 @@ kbd {
   font-weight: 700;
 }
 
+.pb-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f59e0b;
+  color: #0b0b0b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.pb-badge svg {
+  width: 12px;
+  height: 12px;
+  fill: #0b0b0b;
+}
+
 .overlay-actions {
   margin-top: 8px;
   display: flex;
