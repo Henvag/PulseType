@@ -12,6 +12,7 @@ const resultWords = document.getElementById("resultWords");
 const resultChars = document.getElementById("resultChars");
 const resultChart = document.getElementById("resultChart");
 const retryBtn = document.getElementById("retryBtn");
+const confettiLayer = document.getElementById("confetti");
 const loginMenu = document.getElementById("loginMenu");
 const logoutBtn = document.getElementById("logoutBtn");
 const leaderboardList = document.getElementById("leaderboardList");
@@ -178,6 +179,7 @@ let lastSampleSecond = -1;
 let currentUser = null;
 let restartArmed = false;
 let restartTimer = null;
+let bestScoreByDuration = {};
 
 const THEMES = [
   {
@@ -422,15 +424,28 @@ function finishTest() {
   const wpm = elapsed > 0 ? Math.round((totalCorrect / 5) / (elapsed / 60)) : 0;
   const accuracy = totalTyped > 0 ? Math.round((totalCorrect / totalTyped) * 100) : 100;
 
-  resultWpm.textContent = `WPM: ${wpm}`;
-  resultAccuracy.textContent = `Accuracy: ${accuracy}%`;
-  resultWords.textContent = `Words: ${completedWords}`;
-  resultChars.textContent = `Characters: ${totalTyped}`;
+  resultWpm.innerHTML = `WPM: <strong>${wpm}</strong>`;
+  resultAccuracy.innerHTML = `Accuracy: <strong>${accuracy}%</strong>`;
+  resultWords.innerHTML = `Words: <strong>${completedWords}</strong>`;
+  resultChars.innerHTML = `Characters: <strong>${totalTyped}</strong>`;
   resultOverlay.classList.add("show");
   resultOverlay.setAttribute("aria-hidden", "false");
   drawChart();
+
+  const currentBest = bestScoreByDuration[timeLimit];
+  const isPb =
+    !currentBest ||
+    wpm > currentBest.wpm ||
+    (wpm === currentBest.wpm && accuracy > currentBest.accuracy);
+
+  if (isPb) {
+    triggerConfetti();
+  }
+
   if (currentUser) {
-    submitScore({ wpm, accuracy, charsTyped: totalTyped, durationSeconds: timeLimit });
+    submitScore({ wpm, accuracy, charsTyped: totalTyped, durationSeconds: timeLimit }).then(() => {
+      bestScoreByDuration[timeLimit] = { wpm, accuracy };
+    });
   }
 }
 
@@ -679,6 +694,10 @@ async function loadProfile() {
   profileBestBar.innerHTML = "";
   profileRecent.innerHTML = "";
   renderBestBar(profileBestBar, data.best);
+  bestScoreByDuration = {};
+  data.best.forEach((entry) => {
+    bestScoreByDuration[entry.duration_seconds] = { wpm: entry.wpm, accuracy: entry.accuracy };
+  });
 
   if (!data.recent.length) {
     profileRecent.innerHTML = "<li>No recent runs.</li>";
@@ -716,6 +735,24 @@ async function loadProfile() {
     keyboardSelect.value = "";
     keyboardCustomWrap.classList.add("hidden");
   }
+}
+
+function triggerConfetti() {
+  if (!confettiLayer) return;
+  confettiLayer.innerHTML = "";
+  const colors = ["#f97316", "#f59e0b", "#22c55e", "#3b82f6", "#e11d48"];
+  for (let i = 0; i < 40; i += 1) {
+    const piece = document.createElement("span");
+    piece.className = "confetti-piece";
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.background = colors[i % colors.length];
+    piece.style.transform = `translateY(-40px) rotate(${Math.random() * 360}deg)`;
+    piece.style.animationDelay = `${Math.random() * 0.3}s`;
+    confettiLayer.appendChild(piece);
+  }
+  setTimeout(() => {
+    confettiLayer.innerHTML = "";
+  }, 1800);
 }
 
 async function saveKeyboard(label) {
