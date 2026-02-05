@@ -432,18 +432,18 @@ function finishTest() {
   resultOverlay.setAttribute("aria-hidden", "false");
   drawChart();
 
-  const currentBest = bestScoreByDuration[timeLimit];
-  const isPb =
-    !currentBest ||
-    wpm > currentBest.wpm ||
-    (wpm === currentBest.wpm && accuracy > currentBest.accuracy);
-
-  if (isPb) {
-    resultWpm.innerHTML = `WPM: <strong>${wpm}</strong> <span class="pb-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v2h3v4a5 5 0 0 1-5 5h-1a6 6 0 0 1-4 2.9V20h4v2H10v-2h4v-2.1A6 6 0 0 1 10 15H9a5 5 0 0 1-5-5V6h3Zm-1 2v4a3 3 0 0 0 3 3h1V6Zm12 0h-4v7h1a3 3 0 0 0 3-3Z"/></svg> PB</span>`;
-    triggerConfetti();
-  }
-
   if (currentUser) {
+    const currentBest = bestScoreByDuration[timeLimit];
+    const isPb =
+      !currentBest ||
+      wpm > currentBest.wpm ||
+      (wpm === currentBest.wpm && accuracy > currentBest.accuracy);
+
+    if (isPb) {
+      resultWpm.innerHTML = `WPM: <strong>${wpm}</strong> <span class="pb-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v2h3v4a5 5 0 0 1-5 5h-1a6 6 0 0 1-4 2.9V20h4v2H10v-2h4v-2.1A6 6 0 0 1 10 15H9a5 5 0 0 1-5-5V6h3Zm-1 2v4a3 3 0 0 0 3 3h1V6Zm12 0h-4v7h1a3 3 0 0 0 3-3Z"/></svg> PB</span>`;
+      triggerConfetti();
+    }
+
     submitScore({ wpm, accuracy, charsTyped: totalTyped, durationSeconds: timeLimit }).then(() => {
       bestScoreByDuration[timeLimit] = { wpm, accuracy };
     });
