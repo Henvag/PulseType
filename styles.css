@@ -403,10 +403,10 @@ kbd {
 .profile-card {
   background: var(--surface);
   border-radius: 26px;
-  padding: 32px 36px;
+  padding: 24px 28px;
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
-  width: min(900px, 94vw);
-  min-height: 70vh;
+  width: min(780px, 92vw);
+  min-height: 60vh;
   display: grid;
   gap: 20px;
   overflow: visible;
