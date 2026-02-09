@@ -180,6 +180,7 @@ let currentUser = null;
 let restartArmed = false;
 let restartTimer = null;
 let bestScoreByDuration = {};
+let bestScoresLoaded = false;
 
 const THEMES = [
   {
@@ -414,7 +415,7 @@ function adjustWindowForLines() {
   }
 }
 
-function finishTest() {
+async function finishTest() {
   isFinished = true;
   clearInterval(timerId);
   timerId = null;
@@ -433,6 +434,7 @@ function finishTest() {
   drawChart();
 
   if (currentUser) {
+    await ensureBestScoresLoaded();
     const currentBest = bestScoreByDuration[timeLimit];
     const isPb =
       !currentBest ||
@@ -445,14 +447,16 @@ function finishTest() {
     }
 
     submitScore({ wpm, accuracy, charsTyped: totalTyped, durationSeconds: timeLimit }).then(() => {
-      bestScoreByDuration[timeLimit] = { wpm, accuracy };
+      if (isPb) {
+        bestScoreByDuration[timeLimit] = { wpm, accuracy };
+      }
     });
   }
 }
 
 function startTimer() {
   startTime = Date.now();
-  timerId = setInterval(() => {
+timerId = setInterval(() => {
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
     const remaining = Math.max(timeLimit - elapsed, 0);
     timeEl.textContent = `${remaining}s`;
@@ -466,7 +470,7 @@ function startTimer() {
       }
     }
     if (remaining === 0) {
-      finishTest();
+      void finishTest();
     }
   }, 250);
 }
@@ -581,6 +585,7 @@ async function loadMe() {
   const res = await fetch("/api/me");
   const data = await res.json();
   currentUser = data.user;
+  bestScoresLoaded = false;
   if (currentUser) {
     loginMenu.classList.add("hidden");
   } else {
@@ -699,6 +704,7 @@ async function loadProfile() {
   data.best.forEach((entry) => {
     bestScoreByDuration[entry.duration_seconds] = { wpm: entry.wpm, accuracy: entry.accuracy };
   });
+  bestScoresLoaded = true;
 
   if (!data.recent.length) {
     profileRecent.innerHTML = "<li>No recent runs.</li>";
@@ -735,6 +741,22 @@ async function loadProfile() {
   } else {
     keyboardSelect.value = "";
     keyboardCustomWrap.classList.add("hidden");
+  }
+}
+
+async function ensureBestScoresLoaded() {
+  if (bestScoresLoaded) return;
+  try {
+    const res = await fetch("/api/me/scores");
+    if (!res.ok) return;
+    const data = await res.json();
+    bestScoreByDuration = {};
+    data.best.forEach((entry) => {
+      bestScoreByDuration[entry.duration_seconds] = { wpm: entry.wpm, accuracy: entry.accuracy };
+    });
+    bestScoresLoaded = true;
+  } catch {
+    // ignore
   }
 }
 
