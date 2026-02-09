@@ -254,11 +254,11 @@ kbd {
 }
 
 .word.correct {
-  color: #1a7f5f;
+  color: var(--correct);
 }
 
 .word.incorrect {
-  color: #a62424;
+  color: var(--incorrect);
 }
 
 .caret {
@@ -283,16 +283,16 @@ kbd {
 }
 
 .letter.correct {
-  color: #1a7f5f;
+  color: var(--correct);
 }
 
 .letter.incorrect {
-  color: #a62424;
+  color: var(--incorrect);
   text-decoration: underline;
 }
 
 .letter.extra {
-  color: var(--rose);
+  color: var(--incorrect);
 }
 
 .hidden-input {

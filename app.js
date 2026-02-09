@@ -104,6 +104,8 @@ const THEMES = [
     text: "#0b0b0b",
     accent: "#0b0b0b",
     accentContrast: "#ffffff",
+    correct: "#16a34a",
+    incorrect: "#dc2626",
   },
   {
     name: "Nord Light",
@@ -113,6 +115,8 @@ const THEMES = [
     text: "#2e3440",
     accent: "#5e81ac",
     accentContrast: "#ffffff",
+    correct: "#3ba273",
+    incorrect: "#bf616a",
   },
   {
     name: "Solarized Light",
@@ -122,6 +126,8 @@ const THEMES = [
     text: "#586e75",
     accent: "#268bd2",
     accentContrast: "#ffffff",
+    correct: "#859900",
+    incorrect: "#dc322f",
   },
   {
     name: "Serika",
@@ -131,6 +137,8 @@ const THEMES = [
     text: "#2f2a24",
     accent: "#d68f00",
     accentContrast: "#ffffff",
+    correct: "#2e7d32",
+    incorrect: "#b71c1c",
   },
   {
     name: "Tangerine",
@@ -140,6 +148,8 @@ const THEMES = [
     text: "#3b2b1f",
     accent: "#ff7a00",
     accentContrast: "#ffffff",
+    correct: "#2e7d32",
+    incorrect: "#c2410c",
   },
   {
     name: "Obsidian",
@@ -150,6 +160,8 @@ const THEMES = [
     accent: "#7aa2f7",
     accentContrast: "#0b0b0b",
     muted: "rgba(245, 247, 255, 0.6)",
+    correct: "#22c55e",
+    incorrect: "#f87171",
   },
   {
     name: "Rose",
@@ -159,6 +171,8 @@ const THEMES = [
     text: "#3c1f28",
     accent: "#e11d48",
     accentContrast: "#ffffff",
+    correct: "#16a34a",
+    incorrect: "#e11d48",
   },
 ];
 
@@ -171,6 +185,8 @@ function applyTheme(theme) {
   root.style.setProperty("--accent", theme.accent);
   root.style.setProperty("--accent-contrast", theme.accentContrast || "#ffffff");
   root.style.setProperty("--muted", theme.muted || "rgba(0, 0, 0, 0.6)");
+  root.style.setProperty("--correct", theme.correct || "#16a34a");
+  root.style.setProperty("--incorrect", theme.incorrect || "#dc2626");
   localStorage.setItem("pulsetype-theme", theme.name);
 }
 
