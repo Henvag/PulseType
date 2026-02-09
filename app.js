@@ -61,106 +61,19 @@ const closeLoginBtn = document.getElementById("closeLoginBtn");
 const logo = document.getElementById("logo");
 
 const WORD_BANK = [
-  "neon",
-  "cascade",
-  "orbit",
-  "signal",
-  "echo",
-  "woven",
-  "ember",
-  "lumen",
-  "flux",
-  "magnet",
-  "horizon",
-  "atlas",
-  "vector",
-  "pulse",
-  "crystal",
-  "shift",
-  "glow",
-  "current",
-  "terrain",
-  "cinder",
-  "nova",
-  "orbitals",
-  "tempo",
-  "stellar",
-  "prairie",
-  "signal",
-  "cobalt",
-  "drift",
-  "vortex",
-  "bridge",
-  "groove",
-  "motion",
-  "alloy",
-  "prism",
-  "emberline",
-  "sprinter",
-  "signal",
-  "umbra",
-  "lattice",
-  "mirage",
-  "solstice",
-  "caldera",
-  "sprint",
-  "axiom",
-  "hollow",
-  "vector",
-  "swerve",
-  "hush",
-  "tangent",
-  "draft",
-  "synth",
-  "chromatic",
-  "glacier",
-  "voyager",
-  "ripple",
-  "marble",
-  "hinter",
-  "canvas",
-  "loft",
-  "ember",
-  "staccato",
-  "ambient",
-  "grove",
-  "timber",
-  "haze",
-  "summit",
-  "passage",
-  "relay",
-  "brisk",
-  "citadel",
-  "tonic",
-  "fable",
-  "ember",
-  "aurora",
-  "loam",
-  "density",
-  "flare",
-  "shelter",
-  "stride",
-  "bloom",
-  "canyon",
-  "breeze",
-  "harbor",
-  "magnet",
-  "vivid",
-  "alpha",
-  "crest",
-  "delta",
-  "rune",
-  "sound",
-  "static",
-  "shimmer",
-  "quiet",
-  "humming",
-  "signal",
-  "thread",
-  "ignite",
-  "tide",
-  "fuse",
-  "chrome",
+  "the","be","to","of","and","a","in","that","have","i","it","for","not","on","with","he","as","you","do","at",
+  "this","but","his","by","from","they","we","say","her","she","or","an","will","my","one","all","would","there","their",
+  "what","so","up","out","if","about","who","get","which","go","me","when","make","can","like","time","no","just","him","know",
+  "take","people","into","year","your","good","some","could","them","see","other","than","then","now","look","only","come","its",
+  "over","think","also","back","after","use","two","how","our","work","first","well","way","even","new","want","because","any","these",
+  "give","day","most","us","is","are","was","were","had","has","did","does","been","being","may","might","must","shall","should","very",
+  "more","much","many","such","those","here","where","why","while","each","few","both","every","again","great","small","large","world",
+  "house","place","hand","life","part","child","eye","woman","man","long","little","right","left","high","low","home","same","end",
+  "next","last","own","another","still","around","during","without","within","between","under","above","before","after","since",
+  "through","across","until","against","often","always","never","early","late","ever","together","almost","really","something",
+  "nothing","always","today","tomorrow","yesterday","water","food","family","friend","school","night","morning","evening","story",
+  "music","light","sound","paper","letter","number","river","mountain","city","country","street","state","plant","animal","point",
+  "turn","move","change","start","stop","play","run","walk","talk","think","read","write","learn","teach","build","open","close"
 ];
 
 let words = [];
@@ -311,7 +224,7 @@ function shuffleArray(list) {
 function buildWords() {
   const shuffled = shuffleArray(WORD_BANK);
   const extra = shuffleArray(WORD_BANK);
-  words = [...shuffled, ...extra].slice(0, 80);
+  words = [...shuffled, ...extra, ...shuffleArray(WORD_BANK)].slice(0, 200);
   wordStates = Array(words.length).fill(null);
   windowStartIndex = 0;
 }
@@ -989,6 +902,10 @@ inputEl.addEventListener("input", (event) => {
       buildWords();
       renderWords();
       currentIndex = 0;
+    } else if (currentIndex >= words.length - 15) {
+      const extra = shuffleArray(WORD_BANK);
+      words = words.concat(extra);
+      wordStates = wordStates.concat(Array(extra.length).fill(null));
     }
 
     updateActiveWord();
